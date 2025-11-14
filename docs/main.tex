@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage{graphicx}
+
+\title{Your Project Name}
+\author{name1, name2, name3, name4}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+The project MUST implement the following functionality:
+
+\begin{enumerate}
+\item \textbf{Sensor Data Collection:}
+	\begin{itemize}
+	\item Collect data from sensors with the Raspberry Pi Pico W.
+	\end{itemize}
+\item \textbf{Data Processing:}
+	\begin{itemize}
+	\item Implement data processing on the Pico W.
+	\end{itemize}
+\item \textbf{Output Control:}
+	\begin{itemize}
+	\item Control output devices based on processed sensor data.
+	\item Result can be displayed with, e.g.,  LED, OLED, or Android/IOS App.
+	\end{itemize}
+\end{enumerate}
+
+\noindent
+Further, the project MUST implement AT LEAST TWO of the functionalities below:
+\begin{enumerate}
+\item \textbf{Wireless Connectivity:}
+	\begin{itemize}
+	\item Wireless communication with MQTT or HTTP should be implemented. Wi-Fi and Bluetooth can be for wireless connectivity. Pico W has onboard Wi-Fi module available. Bluetooth requires an external module.
+	\end{itemize}
+\item \textbf{Cloud integration:}
+	\begin{itemize}
+	\item Integrate with cloud platforms such as Infuxdb, Mangodb, AWS IoT or Google
+	\end{itemize}
+\item \textbf{Mobile App:}
+	\begin{itemize}
+	\item Develop Android/iOS applications for real-time data visualization and control, utilizing MQTT broker for sending and receiving data. Simple tools like MIT app inventor can be utilized for that purpose
+	\end{itemize}
+\item \textbf{Security:}
+	\begin{itemize}
+	\item Incorporate data encryption
+	\end{itemize}
+\item \textbf{Edge Machine Learning:}
+	\begin{itemize}
+	\item Implement edge-based machine learning models on the Pico W.
+	\end{itemize}
+\end{enumerate}
+
+In this section, describe your application, and which of the above functionalities it implements. Provide the overall view of the application area, zooming in the particular application you've implemented.  
+
+\section{Architecture}
+Describe here, with illustrations, your applications's sensor layer, networking layer, and data management layer.
+
+\section{Methods \& Tools}
+Provide here a detailed description of the implementation of the system functionality, along with any libraries, tools, and methods used.
+
+\section{Evaluation}
+Provide here a detailed description of how you evaluated the application. Evaluate your implementation using selected criteria, for example:
+\begin{itemize}
+\item System throughput (e.g. number of messages).
+\item System latency (e.g., network and request processing latency.
+\end{itemize}
+Design two evaluation scenarios that you compare with each other, for example:
+\begin{itemize}
+\item Small number / large number of messages
+\item Small payload / big payload
+\end{itemize}
+
+
+
+\section{Results}
+
+Collect numerical data of test cases:
+\begin{itemize}
+\item Collecting logs of container operations
+\item Conduct simple analysis for documentation purposes (e.g. plots or graphs)
+\end{itemize}
+
+
+\section{Discussion}
+Discuss the results of the evaluation. What weaknesses does your application have? In what scenarions does it work well? Return back to the application area you described in Introduction -- put the results in context.
+
+
+\end{document}
