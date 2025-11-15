@@ -105,17 +105,17 @@ business layer handles any logic required for the client, and the service proxy 
 \section{Methods \& Tools}
 The development of the Smart Bike system will be based on a modular architecture combining embedded programming on the Raspberry Pi Pico W, wireless communication, and a mobile application. The project will follow an object-oriented programming (OOP) approach, where each hardware and software component will be encapsulated into dedicated classes (e.g., GPSSensor, LightSensor, ActuatorController, MQTTClient, AppInterface). 
 
-\subsection{Embedded Programming & Libraries}
+\subsection{Embedded Programming \& Libraries}
 
 The Raspberry Pi Pico W will run MicroPython and will be responsible for reading sensor data, processing it locally, and controlling the output actuators. To support these functionalities, several libraries will be used:
 
 \begin{itemize}
     \item \textbf{MicropyGPS:} This library will be used to read and parse GPS data from an external GPS module. It will allow the system to obtain coordinates, speed, and direction information in a structured format.
-    \item \textbf{machine & utime (MicroPython core libraries):} These libraries will allow interaction with GPIO pins, ADC-based sensors (light, temperature), and will provide timing utilities needed for periodic data collection and event scheduling.
+    \item \textbf{machine \& utime (MicroPython core libraries):} These libraries will allow interaction with GPIO pins, ADC-based sensors (light, temperature), and will provide timing utilities needed for periodic data collection and event scheduling.
     \item \textbf{umqtt.simple:} This lightweight MQTT library will be used to publish sensor data and receive commands from the mobile app. It will form the backbone of the wireless communication layer.
 \end{itemize}
 
-\subsection{Networking & Wireless Tools}
+\subsection{Networking \& Wireless Tools}
 
 The Smart Bike would likely rely on the Raspberry Pi Pico W’s onboard Wi-Fi module to enable wireless connectivity. The Pico W will connect to a Wi-Fi network on startup and will establish a connection to an MQTT broker. MQTT will be chosen as the main communication protocol because of its low overhead and suitability for IoT systems that exchange small and frequent messages.
 
