@@ -86,6 +86,22 @@ In this section, describe your application, and which of the above functionaliti
 \section{Architecture}
 Describe here, with illustrations, your applications's sensor layer, networking layer, and data management layer.
 
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{Slide1.jpg}
+	\caption{Architecture diagram}
+	\label{fig:architecture}
+\end{figure}
+
+In figure \ref{fig:architecture}, we can see the architecture that we will use for our project. In the IoT device,
+the data manager allows an easy access to the information stored in the devices' memory. The Sensor/Actuator manager
+provides an abstraction that allows us to easily access to the data provided by different sensors or activate different
+actuators in an easy way. The network manager will be in charge of handling the connectivity with the mobile app. The business
+layer takes decisions based on the data from different sources.
+\\
+\\
+In the mobile app we have the classical three layer architecture for clients: The presentation layer renders the UI for the user, the 
+business layer handles any logic required for the client, and the service proxy connects to the IoT device.
+
 \section{Methods \& Tools}
 Provide here a detailed description of the implementation of the system functionality, along with any libraries, tools, and methods used.
 
