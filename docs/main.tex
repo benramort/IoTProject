@@ -101,6 +101,32 @@ Design two evaluation scenarios that you compare with each other, for example:
 \item Small payload / big payload
 \end{itemize}
 
+To be able to ensure that the products performance is the expected, we will carry on different evaluation that will measure different
+attributes of the product.
+\\
+\\
+\textbf{Throughput:} The throughput of our product is not that critical, because just a couple of devices will be connected and sending messages to the device
+at any point, it is not expected to receive a high volume of messages. But our product will have a minimum throughput of 10 messages per second, ensuring that
+the user never has to wait for any message to be processed.
+\\
+\\
+\textbf{Latency:} To have an adequate user experience, all the actions requested from the mobile app to the device should be answered and carried
+out in less than 0.5 seconds.
+\\
+\\
+\textbf{Usability:} Our product should be usable by any potential user with ease. Both the device and the mobile app should have an easy installation, setup and 
+operation. To ensure that, the device must be able to be installed in the bike in less than 5 minutes by an unexperienced user, and the users should not take more
+than 2 minutes to perform any task on the mobile app without previous knowledge.
+\\
+\\
+To ensure that this criterion is met, we will carry out two evaluation scenarios:
+\begin{itemize}
+	\item A latency test, where we will send an instruction to the device and measure the time it takes to give a response.
+	\item A usability test, where a user who has never used the app will be requested to perform a task and we will measure the time it takes.
+\end{itemize}
+
+
+
 
 
 \section{Results}
