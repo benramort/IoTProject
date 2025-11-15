@@ -3,59 +3,57 @@
 
 \title{Smart Bike}
 \author{Benat Ramirez, Merixtell, Vigo, Mark Suvorov, Group 7}
+\setlength{\parskip}{1em}
 \date{}
 
 \begin{document}
 
 \maketitle
-\begin{itemize}
-	\item sensors:
-	\begin{itemize}
-		\item GPS, speed
-		\item light sensor
-		\item temperature sensor
-	\end{itemize}
-	\item actuators:
-	\begin{itemize}
-		\item light
-		\item sound
-		\item remote lock, proximity lock
-		\item heater
-	\end{itemize}
-	\item project:
-	\begin{itemize}
-		\item mobile app
-		\item security
-		\item wifi
-	\end{itemize}
-	\item functionalities:
-	\begin{itemize}
-		\item proximity lock
-		\item parking search mode
-		\item autolights
-		\item position, speed and statistics
-		\item app, wireless
-	\end{itemize}
-\end{itemize}
 \section{Introduction}
-The project MUST implement the following functionality:
+
+The Smart Bike project will be implemented as an attachable device for the bike, which will expand your biking experience beyond just pedaling.
+
+It will include features for automating routine tasks, such as locking and unlocking your bike every time you need to leave it for five minutes. It will also provide the lights that operate based on the surrounding light level, so when the evening comes they turn on automatically and contribute to your safety. Using both lights and sound, the Smart Bike device will make it easier to locate the bike in the parking area by signaling when the user needs it. Moreover, the heaters on the handles are activated either by the surrounding temperature or the user's request will make biking even more enjoyable.
+
+Besides the features improving the comfort of using the bike, the project includes the mobile app, where the history of the rides will be recorded and displayed in a user-friendly format for informational purposes and to provide feedback to the user.
+
+For the connection of the device to a network and the mobile app the wireless technologies will be used. The data transferred over these networks will be encrypted, ensuring privacy and security.
+
+\noindent
+The project implements the following functionalities:
 
 \begin{enumerate}
-\item \textbf{Sensor Data Collection:}
+\item \textbf{Collecting the data from:}
 	\begin{itemize}
-	\item Collect data from sensors with the Raspberry Pi Pico W.
+	\item Light sensor
+	\item Temperature sensor
+	\item GPS module
 	\end{itemize}
 \item \textbf{Data Processing:}
 	\begin{itemize}
-	\item Implement data processing on the Pico W.
+	\item Arranging the data from different sensors into the payloads to send over the network
+	\item Local logic for manipulating actuators
 	\end{itemize}
 \item \textbf{Output Control:}
 	\begin{itemize}
-	\item Control output devices based on processed sensor data.
-	\item Result can be displayed with, e.g.,  LED, OLED, or Android/IOS App.
+	\item Lock with remote control / proximity lock
+	\item Automatic lights reacting to the environmental light levels 
+	\item Sound and light control as part of the UI, also helping to find the bike in the parking area
+	\item Heater elements on the handles of the bike
+	\item Info and statistics displayed in the Android App
+	\end{itemize}
+\item \textbf{Additional functionality:}
+	\begin{itemize}
+	\item Wireless connectivity 
+	\item Mobile app
+	\item Security
 	\end{itemize}
 \end{enumerate}
+For further development, the cloud integration can be considered, along with the analysis of anonymized user data for research purposes or to improve biking routes and infrastructure.
 
+Furthermore, the idea of deeper integration of sensors and actuators directly into the bike, as opposed to the attachable version, can also be explored. At the very least, this could allow the inclusion of the sensors measuring the force on the pedals, which would contribute significantly to the usefulness of the statistics provided in the app. It could also include pressure sensors in the tires to track tire pressure and signal when it is too low.  
+
+\section{template part}
 \noindent
 Further, the project MUST implement AT LEAST TWO of the functionalities below:
 \begin{enumerate}
@@ -74,10 +72,6 @@ Further, the project MUST implement AT LEAST TWO of the functionalities below:
 \item \textbf{Security:}
 	\begin{itemize}
 	\item Incorporate data encryption
-	\end{itemize}
-\item \textbf{Edge Machine Learning:}
-	\begin{itemize}
-	\item Implement edge-based machine learning models on the Pico W.
 	\end{itemize}
 \end{enumerate}
 
