@@ -1,4 +1,8 @@
 
+def init():
+    return
+
+
 def get_temperature():
     return 10
 
