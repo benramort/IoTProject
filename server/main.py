@@ -15,6 +15,8 @@ if (sta_if.isconnected() == False):
 server : MicroPyServer = MicroPyServer()
 facade.set_server(server)
 server.add_route("/", facade.hello_world)
+server.add_route("/settings", facade.configure_settings, "PUT")
+server.add_route("/sensors", facade.get_sensor_data, "GET")
 server.start()
 
 
