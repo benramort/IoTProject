@@ -14,12 +14,12 @@ def init():
     buzzer_pwm = machine.PWM(machine.Pin(17))
     buzzer_pwm.freq(4000)
     #configure RGB led
-    r_pwm = machine.PWM(machine.Pin(18))
-    r_pwm.freq(19000 // 4)
-    g_pwm = machine.PWM(machine.Pin(19))
-    g_pwm.freq(19000 // 4)
-    b_pwm = machine.PWM(machine.Pin(20))
-    b_pwm.freq(19000 // 4)
+    #r_pwm = machine.PWM(machine.Pin(18))
+    #r_pwm.freq(19000 // 4)
+    #g_pwm = machine.PWM(machine.Pin(19))
+    #g_pwm.freq(19000 // 4)
+    #b_pwm = machine.PWM(machine.Pin(20))
+    #b_pwm.freq(19000 // 4)
     return
 
 
@@ -80,14 +80,18 @@ def set_rgb_value(r, g, b):
 def turn_lights_on():
     global light_state
     light_state = True
-    set_rgb_value(255, 255, 255)
+    machine.pin(18, machine.pin.out).value(0)
+    machine.pin(19, machine.pin.out).value(0)
+    machine.pin(20, machine.pin.out).value(0)
     return
 
 
 def turn_lights_off():
     global light_state
     light_state = False
-    set_rgb_value(0, 0, 0)
+    machine.pin(18, machine.pin.out).value(1)
+    machine.pin(19, machine.pin.out).value(1)
+    machine.pin(20, machine.pin.out).value(1)
     return
 
 
