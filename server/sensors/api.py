@@ -80,18 +80,18 @@ def set_rgb_value(r, g, b):
 def turn_lights_on():
     global light_state
     light_state = True
-    machine.pin(18, machine.pin.out).value(0)
-    machine.pin(19, machine.pin.out).value(0)
-    machine.pin(20, machine.pin.out).value(0)
+    machine.Pin(18, machine.Pin.OUT).value(0)
+    machine.Pin(19, machine.Pin.OUT).value(0)
+    machine.Pin(20, machine.Pin.OUT).value(0)
     return
 
 
 def turn_lights_off():
     global light_state
     light_state = False
-    machine.pin(18, machine.pin.out).value(1)
-    machine.pin(19, machine.pin.out).value(1)
-    machine.pin(20, machine.pin.out).value(1)
+    machine.Pin(18, machine.Pin.OUT).value(1)
+    machine.Pin(19, machine.Pin.OUT).value(1)
+    machine.Pin(20, machine.Pin.OUT).value(1)
     return
 
 
