@@ -37,7 +37,7 @@ def proximityCheck():
     ...
 
 
-def subroutine():
+async def subroutine():
     while True:
         print("Subroutine running")
-        time.sleep(1)
+        await uasyncio.sleep(1)

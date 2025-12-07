@@ -1,10 +1,17 @@
 import network
 from machine import Pin
-from lib.micropyserver import MicroPyServer
+from lib.micropyserver_async import MicroPyServer_async
 import facade.facade as facade
 import sensors.api as api
 import _thread
 import core.core as core
+import uasyncio
+
+async def main():
+    uasyncio.create_task(server.start())
+    uasyncio.create_task(core.subroutine())
+    await uasyncio.sleep(200)
+
 
 
 sta_if = network.WLAN(network.STA_IF)
@@ -18,15 +25,14 @@ if (sta_if.isconnected() == False):
 
 # api.init()
 
-_thread.start_new_thread(core.subroutine, ())
-
-server : MicroPyServer = MicroPyServer()
+server : MicroPyServer_async = MicroPyServer_async()
 facade.set_server(server)
 server.add_route("/", facade.hello_world)
 server.add_route("/settings", facade.configure_settings, "PUT")
 server.add_route("/sensors", facade.get_sensor_data, "GET")
 server.add_route("/ligth", facade.set_ligth, "PUT")
-server.start()
+
+uasyncio.run(main())
 
 
 

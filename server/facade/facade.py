@@ -1,11 +1,11 @@
 import lib.utils as utils
-from lib.micropyserver import MicroPyServer
+from lib.micropyserver_async import MicroPyServer_async
 import core.core as core
 import json
 
-server : MicroPyServer
+server : MicroPyServer_async
 
-def set_server(srv : MicroPyServer):
+def set_server(srv : MicroPyServer_async):
     global server
     server = srv
 
