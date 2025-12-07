@@ -1,6 +1,7 @@
 import time
 import sensors.api as api
 import uasyncio
+import math
 
 
 def configure_settings(enableAutoLigth : bool, autoLigthLevelOn : float, autoLigthLevelOf : float, enableProximityLock : bool, proximityLockMeters : float):
@@ -33,8 +34,23 @@ def findMode():
 def getGPSHistory(starttime : int, endtime : int) -> list:
     ...
 
-def proximityCheck():
-    ...
+def proximityCheck(bike_lon, bike_lat, user_lon, user_lat):
+    # Earth radius in meters
+    R = 6371000  
+
+    # Convert degrees to radians
+    phi1 = math.radians(bike_lat)
+    phi2 = math.radians(user_lat)
+    delta_phi = math.radians(user_lat - bike_lat)
+    delta_lambda = math.radians(user_lon - bike_lon)
+
+    # Haversine formula
+    a = math.sin(delta_phi/2)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    distance = R * c  # distance in meters
+
+    # Return True if within 15 meters, otherwise False
+    return distance <= 15
 
 
 def subroutine():
