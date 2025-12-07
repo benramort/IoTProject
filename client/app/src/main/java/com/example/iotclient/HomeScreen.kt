@@ -1,6 +1,5 @@
 package com.example.iotclient
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -18,7 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.iotclient.serviceProxy.Prueba
+import com.example.iotclient.serviceProxy.ServiceProxy
 import com.example.weddingapp.ui.settings.BottomNavigationBar
 import com.example.weddingapp.ui.settings.PurpleMain
 
@@ -168,14 +167,17 @@ fun ControlsSection(modifier: Modifier = Modifier) {
         ControlButton(
             icon = Icons.Default.Lightbulb,
             label = "Light",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = { ServiceProxy().setLight(true) }
 
         )
 
         ControlButton(
             icon = Icons.Default.Lock,
             label = "Lock",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = { ServiceProxy().setLock(true) }
+
         )
     }
 }
@@ -187,13 +189,15 @@ fun ControlsSection(modifier: Modifier = Modifier) {
 fun ControlButton(
     icon: ImageVector,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Card(
         modifier = modifier.height(200.dp),
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier

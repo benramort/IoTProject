@@ -22,8 +22,6 @@ import com.example.iotclient.PurpleSoft
 import com.example.weddingapp.ui.settings.PurpleMain
 import java.util.*
 
-val PurpleSoft = Color(0xFFEDE7F6)
-val PurpleMain = Color(0xFF7C4DFF)
 val RoutePurple = Color(0xFF7C4DFF)
 val RoutePink = Color(0xFFFF69B4)
 val RouteYellow = Color(0xFFFFA500)
@@ -190,6 +188,8 @@ fun MapTopBar(
     onNextDay: () -> Unit,
     onSelectDay: () -> Unit
 ) {
+    val context = LocalContext.current
+
     val dayString =
         "${currentDay.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault())}, " +
                 "${currentDay.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())} " +
@@ -209,7 +209,23 @@ fun MapTopBar(
         Text(dayString, style = MaterialTheme.typography.titleMedium)
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onSelectDay) {
+            IconButton(onClick = {
+                // Ensure this is called inside an actual Activity context
+                val year = currentDay.get(Calendar.YEAR)
+                val month = currentDay.get(Calendar.MONTH)
+                val day = currentDay.get(Calendar.DAY_OF_MONTH)
+
+                DatePickerDialog(context, { _, y, m, d ->
+                    currentDay.time = Calendar.getInstance().apply {
+                        set(y, m, d)
+                    }.time
+                }, year, month, day).apply {
+                    setOnShowListener {
+                        getButton(DatePickerDialog.BUTTON_POSITIVE)?.setTextColor(PurpleMain.toArgb())
+                        getButton(DatePickerDialog.BUTTON_NEGATIVE)?.setTextColor(PurpleMain.toArgb())
+                    }
+                }.show()
+            }) {
                 Icon(Icons.Default.CalendarToday, contentDescription = "Select Day")
             }
 
@@ -221,7 +237,6 @@ fun MapTopBar(
         }
     }
 }
-
 
 
 // -------------------------------------------------------
