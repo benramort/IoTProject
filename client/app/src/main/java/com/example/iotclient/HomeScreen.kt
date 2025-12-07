@@ -3,6 +3,7 @@
 // ============================================
 package com.example.iotclient
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.iotclient.serviceProxy.Prueba
 
 @Composable
 fun HomeScreen() {
@@ -132,6 +134,7 @@ fun ControlsSection(modifier: Modifier = Modifier) {
             icon = Icons.Default.Lightbulb,
             label = "Light",
             modifier = Modifier.weight(1f)
+
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -191,6 +194,7 @@ fun ControlButton(
 
 @Composable
 fun BottomNavigationBar() {
+    val prueba = Prueba()
     Surface(
         modifier = Modifier.fillMaxWidth(),
         color = Color.White,
@@ -231,7 +235,7 @@ fun BottomNavigationBar() {
             }
 
             // Settings/Configuration Icon (Right)
-            IconButton(onClick = { /* TODO: Navigate to Settings */ }) {
+            IconButton(onClick = { prueba.fetch() }) {
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Configuration",
@@ -242,6 +246,7 @@ fun BottomNavigationBar() {
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
