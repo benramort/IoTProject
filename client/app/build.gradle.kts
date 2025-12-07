@@ -52,6 +52,13 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation("androidx.compose.material:material-icons-extended:1.5.4") // adds 2000+ icons including Thermostat, WbSunny, Lightbulb, Map
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("androidx.navigation:navigation-compose:2.7.3")
+    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
+    implementation("androidx.activity:activity-compose:1.9.0")
+    implementation("com.google.maps.android:maps-compose:4.3.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation(libs.androidx.compose.foundation)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
