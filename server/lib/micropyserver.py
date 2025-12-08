@@ -44,6 +44,8 @@ class MicroPyServer(object):
         self._on_error_handler = None
         self._sock = None
 
+    
+
     def start(self):
         """ Start server """
         self._sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

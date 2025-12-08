@@ -1,6 +1,3 @@
-// ============================================
-// HomeScreen.kt
-// ============================================
 package com.example.iotclient
 
 import androidx.compose.foundation.background
@@ -13,49 +10,88 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.iotclient.serviceProxy.ServiceProxy
+import com.example.weddingapp.ui.settings.BottomNavigationBar
+import com.example.weddingapp.ui.settings.PurpleMain
 
+// -------------------------------------------------------
+// COLORS
+// -------------------------------------------------------
+val PurpleMain = Color(0xFF7C4DFF)
+val PurpleSoft = Color(0xFFEDE7F6)
+val BackgroundSoft = Color(0xFFF9F7FC)
+
+// -------------------------------------------------------
+// MAIN SCREEN
+// -------------------------------------------------------
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    currentScreen: String,
+    onNavigate: (String) -> Unit
+) {
     Scaffold(
-        bottomBar = { BottomNavigationBar() }
+        bottomBar = { BottomNavigationBar(currentScreen, onNavigate) }
     ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .background(Color(0xFFF5F5F5))
+                .background(
+                    Brush.verticalGradient(
+                        listOf(BackgroundSoft, Color.White)
+                    )
+                )
         ) {
-            // Top Half - Environment Info (Temperature and Light)
-            EnvironmentInfoSection(
+            // Top half
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                EnvironmentInfoSection()
+            }
+
+            // Divider in middle
+            Divider(
+                color = Color.Gray.copy(alpha = 0.3f),
+                thickness = 1.dp,
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .align(Alignment.CenterHorizontally)
             )
 
-            // Bottom Half - Control Buttons (Light and Lock)
-            ControlsSection(
+            // Bottom half
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .weight(1f)
-            )
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                ControlsSection()
+            }
         }
     }
 }
 
+// -------------------------------------------------------
+// ENVIRONMENT INFO
+// -------------------------------------------------------
 @Composable
 fun EnvironmentInfoSection(modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Temperature Card
         InfoCard(
             icon = Icons.Default.Thermostat,
             label = "Temperature",
@@ -63,9 +99,6 @@ fun EnvironmentInfoSection(modifier: Modifier = Modifier) {
             modifier = Modifier.weight(1f)
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
-
-        // Light Condition Card
         InfoCard(
             icon = Icons.Default.WbSunny,
             label = "Light",
@@ -75,6 +108,9 @@ fun EnvironmentInfoSection(modifier: Modifier = Modifier) {
     }
 }
 
+// -------------------------------------------------------
+// INFO CARD
+// -------------------------------------------------------
 @Composable
 fun InfoCard(
     icon: ImageVector,
@@ -83,36 +119,34 @@ fun InfoCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.height(150.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        modifier = modifier.height(200.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 imageVector = icon,
                 contentDescription = label,
-                modifier = Modifier.size(40.dp),
-                tint = Color(0xFF6200EE)
+                modifier = Modifier.size(50.dp),
+                tint = PurpleMain
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = label,
-                fontSize = 14.sp,
+                fontSize = 16.sp,
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = value,
-                fontSize = 24.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
@@ -120,133 +154,131 @@ fun InfoCard(
     }
 }
 
+// -------------------------------------------------------
+// CONTROLS
+// -------------------------------------------------------
 @Composable
 fun ControlsSection(modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Light Control Button
         ControlButton(
             icon = Icons.Default.Lightbulb,
             label = "Light",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = { ServiceProxy().setLight(true) }
+
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
-
-        // Lock/Unlock Control Button
         ControlButton(
             icon = Icons.Default.Lock,
             label = "Lock",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onClick = { ServiceProxy().setLock(true) }
+
         )
     }
 }
 
+// -------------------------------------------------------
+// CONTROL BUTTON CARD
+// -------------------------------------------------------
 @Composable
 fun ControlButton(
     icon: ImageVector,
     label: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     Card(
-        modifier = modifier.height(150.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        modifier = modifier.height(200.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+        onClick = onClick
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Surface(
                 shape = CircleShape,
-                color = Color(0xFF6200EE),
-                modifier = Modifier.size(60.dp)
+                color = Color.White,
+                modifier = Modifier.size(70.dp)
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = label,
-                    modifier = Modifier.padding(16.dp),
-                    tint = Color.White
+                    tint = PurpleMain,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = label,
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
-                color = Color.Black
+                fontWeight = FontWeight.Medium
             )
         }
     }
 }
 
+// -------------------------------------------------------
+// BOTTOM NAVIGATION BAR
+// -------------------------------------------------------
 @Composable
-fun BottomNavigationBar() {
+fun BottomNavigationBar(currentScreen: String,onNavigate: (String) -> Unit) {
     Surface(
-        modifier = Modifier.fillMaxWidth(),
-        color = Color.White,
-        shadowElevation = 8.dp
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(horizontal = 20.dp, vertical = 10.dp),
+        tonalElevation = 8.dp,
+        shadowElevation = 20.dp,
+        color = PurpleSoft.copy(alpha = 0.85f),
+        shape = RoundedCornerShape(28.dp)
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(70.dp)
+                .fillMaxSize()
                 .padding(horizontal = 32.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Map Icon (Left)
-            IconButton(onClick = { /* TODO: Navigate to Map */ }) {
-                Icon(
-                    imageVector = Icons.Default.Map,
+            IconButton(onClick = { onNavigate("map") }) {
+                Icon(Icons.Default.Map,
                     contentDescription = "Map",
-                    modifier = Modifier.size(28.dp),
-                    tint = Color.Gray
-                )
+                    tint = Color(0xFF666666),
+                    modifier = Modifier.size(30.dp))
             }
-
-            // Home Icon (Center) - Highlighted with circle background
-            Surface(
-                shape = CircleShape,
-                color = Color(0xFF6200EE),
-                modifier = Modifier.size(56.dp)
-            ) {
-                IconButton(onClick = { /* Already on Home */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = "Home",
-                        tint = Color.White,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+            IconButton(onClick = { onNavigate("home") }) {
+                Icon(Icons.Default.Home,
+                    contentDescription = "Home",
+                    tint = if (currentScreen == "home") PurpleMain else Color.Black,
+                    modifier = Modifier.size(28.dp))
             }
-
-            // Settings/Configuration Icon (Right)
-            IconButton(onClick = { /* TODO: Navigate to Settings */ }) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Configuration",
-                    modifier = Modifier.size(28.dp),
-                    tint = Color.Gray
-                )
+            IconButton(onClick = { onNavigate("settings") }) {
+                Icon(Icons.Default.Settings,
+                    contentDescription = "Settings",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(30.dp))
             }
         }
     }
 }
 
+// -------------------------------------------------------
+// PREVIEW
+// -------------------------------------------------------
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
     MaterialTheme {
-        HomeScreen()
+        HomeScreen(currentScreen = "home", onNavigate = {})
     }
 }

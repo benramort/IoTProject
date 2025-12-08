@@ -39,3 +39,26 @@ def get_sensor_data(request):
     json_data = json.dumps(data)
     # print(data)
     utils.send_response(server, json_data, 200)
+
+def set_ligth(request):
+    print(request)
+    try:
+        json_start = str.find(request, "{")
+        request_body = request[json_start : ]
+        request_json = json.loads(request_body)
+        core.setLight(request_json["state"])
+    except (ValueError, KeyError) as e:
+        print(e)
+        utils.send_response(server, "Invalid JSON", 400)
+
+def set_lock(request):
+    print(request)
+    try:
+        json_start = str.find(request, "{")
+        request_body = request[json_start : ]
+        request_json = json.loads(request_body)
+        core.setLight(request_json["state"])
+    except (ValueError, KeyError) as e:
+        print(e)
+        utils.send_response(server, "Invalid JSON", 400)
+
