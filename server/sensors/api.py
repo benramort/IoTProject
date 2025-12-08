@@ -1,27 +1,34 @@
 import machine 
 
 light_state = False
+lock_state = False
 i2c = None
-r_pwm = g_pwm = b_pwm = None
 buzzer_pwm = None
+button_1 = None
 
-def init():
-    global i2c, r_pwm, g_pwm, b_pwm, buzzer_pwm
+def init(light_state_i = False, lock_state_i = False):
+    global i2c, buzzer_pwm, light_state, lock_state, button_1
+
+    light_state = light_state_i
+    lock_state = lock_state_i
     i2c = machine.I2C(0, sda=machine.Pin(12), scl=machine.Pin(13))
+
+    #configure button
+    button_1 = machine.Pin(2, machine.Pin.IN, machine.Pin.PULL_UP)
+    button_1.irq(trigger=machine.Pin.IRQ_RISING, handler=buttons_callback)
+
     #configure light level sensor
     i2c.writeto_mem(0x10, 0x1000, b'\x00')
+
     #configure buzzer
     buzzer_pwm = machine.PWM(machine.Pin(17))
     buzzer_pwm.freq(4000)
-    #configure RGB led
-    #r_pwm = machine.PWM(machine.Pin(18))
-    #r_pwm.freq(19000 // 4)
-    #g_pwm = machine.PWM(machine.Pin(19))
-    #g_pwm.freq(19000 // 4)
-    #b_pwm = machine.PWM(machine.Pin(20))
-    #b_pwm.freq(19000 // 4)
     return
 
+
+def buttons_callback(pin):
+    if pin == button_1:
+        toggle_lights()
 
 def get_temperature():
     """
@@ -55,14 +62,18 @@ def draw_screen():
 
 
 def get_lock_state():
-    return False
+    return lock_state
 
 
 def lock_bike():
+    lock_state = True
+    machine.Pin(14, machine.Pin.OUT).value(1)
     return
 
 
 def unlock_bike():
+    lock_state = False
+    machine.Pin(14, machine.Pin.OUT).value(0)
     return
 
 
@@ -70,10 +81,12 @@ def get_light_state():
     return light_state
 
 
-def set_rgb_value(r, g, b):
-    r_pwm.duty_u16((255-r)**2)
-    g_pwm.duty_u16((255-g)**2)
-    b_pwm.duty_u16((255-b)**2)
+def toggle_lights():
+    global light_state
+    if light_state:
+        turn_lights_off()
+    else:
+        turn_lights_on()
     return
 
 
@@ -92,8 +105,4 @@ def turn_lights_off():
     machine.Pin(18, machine.Pin.OUT).value(1)
     machine.Pin(19, machine.Pin.OUT).value(1)
     machine.Pin(20, machine.Pin.OUT).value(1)
-    return
-
-
-def get_gps():
     return
