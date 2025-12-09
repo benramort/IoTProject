@@ -67,7 +67,8 @@ def set_lock(request):
 def find_mode(request):
     #request - HTTP request in text
     #add listener to the main.py
-    ...
+    core.activate_find_mode = True
+    utils.send_response(server, "OK", 200)
 
 
 def check_proximity(request):

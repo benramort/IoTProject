@@ -7,6 +7,7 @@ import json
 
 _auto_lights_level_on = 0
 _auto_lights_level_off = 0
+activate_find_mode = False
 
 def configure_settings(enable_auto_ligths : bool, auto_ligths_level_on : float, auto_ligths_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
     print("Auto light: {}, On level: {:.2f}, Off level: {:.2f}, Proximity lock: {}, Proximity lock meters: {:.2f}".format(
@@ -58,7 +59,7 @@ wish = [
     (294, 250), (392, 250), (330, 250),
     (349, 500)
 ]
-def findMode():
+def find_mode():
     for freq, duration in wish:
         api.play_sound(freq)
         api.turn_lights_on()
@@ -72,8 +73,12 @@ def get_GPS_history(start_time : int, end_time : int) -> list:
 
 
 def subroutine():
+    global activate_find_mode
     while True:
         # print("Subroutine running")
+        if activate_find_mode:
+            find_mode()
+            activate_find_mode = False
         time.sleep(1)
 
 
