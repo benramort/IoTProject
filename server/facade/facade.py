@@ -72,19 +72,11 @@ def check_proximity(request):
         user_lat = request_json["lat"]
         user_lon = request_json["lon"]
 
-        # Get bike GPS -- I DON'T KNOW FROM WHERE 
-        #bike_lat, bike_lon = api.get_gps()  
-
         # Use core’s proximity check
         is_close = core.proximity_check(
-            bike_lon=bike_lon,
-            bike_lat=bike_lat,
             user_lon=user_lon,
             user_lat=user_lat
         )
-
-        if is_close:
-            core.setLock(False)
 
         response = {"close": is_close}
         utils.send_response(server, json.dumps(response), 200)

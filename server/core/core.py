@@ -75,9 +75,17 @@ def subroutine():
         time.sleep(1)
 
 
-def proximity_check(bike_lon, bike_lat, user_lon, user_lat):
+def proximity_check(user_lon, user_lat):
     # Earth radius in meters
     R = 6371000  
+
+    # Get bike GPS directly here
+    try:
+        bike_lat = 0 # THIS IS NOT IMPLEMENTED YET
+        bike_lon = 0  # Must return (lat, lon)
+    except:
+        # If GPS unavailable, fail safe
+        return False
 
     # Convert degrees to radians
     phi1 = math.radians(bike_lat)
@@ -91,7 +99,13 @@ def proximity_check(bike_lon, bike_lat, user_lon, user_lat):
     distance = R * c  # distance in meters
 
     # Return True if within 15 meters, otherwise False
-    return distance <= 15
+    is_close = distance <= 15
+
+    # Automatically unlock if close
+    if is_close:
+        setLock(False)
+
+    return is_close
 
 
 def parse_lat_lon(lat_str, ns, lon_str, ew):
