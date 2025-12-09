@@ -34,7 +34,7 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
 
     var autoUnlock by remember { mutableStateOf(false) }
     var unlockDistance by remember { mutableStateOf("1 m") }
-    val distanceOptions = listOf("0.5 m", "1 m", "2 m", "5 m")
+    val distanceOptions = listOf("0.5 m", "1 m", "2 m", "5 m", "10 m")
 
     var selectedLanguage by remember { mutableStateOf("English") }
     val languageOptions = listOf("English", "Español")
@@ -74,7 +74,7 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
                     options = lightOptions,
                     selectedOption = lightTemperature,
                     onOptionSelected = { lightTemperature = it },
-                    label = if (selectedLanguage == "Español") "Temperatura de activación" else "Activation temperature"
+                    label = if (selectedLanguage == "Español") "Nivel de luz" else "Light level"
                 )
             }
 
@@ -114,7 +114,7 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
                 onClick = {
                     println("----- SETTINGS SUBMITTED -----")
                     println("Auto Light: $autoLight")
-                    println("Light Temperature: $lightTemperature")
+                    println("Light Level: $lightTemperature")
                     println("Auto Unlock: $autoUnlock")
                     println("Unlock Distance: $unlockDistance")
                     println("Language: $selectedLanguage")

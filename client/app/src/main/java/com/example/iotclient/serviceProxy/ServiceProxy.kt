@@ -1,5 +1,6 @@
 package com.example.iotclient.serviceProxy
 
+import android.location.Location
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,13 +12,10 @@ import kotlinx.serialization.json.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class ServiceProxy {
+object ServiceProxy {
 
-    private companion object {
-        val client = OkHttpClient()
-    }
-
-    val baseUrl = "http://192.168.137.164:80"
+    private val client = OkHttpClient()
+    private const val baseUrl = "http://10.42.0.55:80"
 
     fun fetch() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -34,12 +32,31 @@ class ServiceProxy {
         }
     }
 
+    fun proximityCheck(location : Location) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val json = Json.encodeToString(LocationDTO(location.latitude, location.longitude))
+            Log.d("myApp", json)
+            val requestBody = json.toRequestBody()
+
+            val request = Request.Builder()
+                .url(baseUrl+"/proximityCheck")
+                .put(requestBody)
+                .build()
+
+            val response = client.newCall(request).execute()
+
+            Log.d("myApp", response.body.toString())
+            response.close()
+        }
+    }
+
     fun setLight(status: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             val state = State(status)
             val jsonBody = Json.encodeToString(state)
 
             // Create request body
+            Log.d("myApp", jsonBody)
             val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
 
             // Build PUT request

@@ -13,8 +13,13 @@ import androidx.compose.ui.Modifier
 import com.example.iotclient.ui.theme.IoTClientTheme
 import com.example.weddingapp.ui.map.MapScreen
 import com.example.weddingapp.ui.settings.SettingsScreen
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var fusedLocationClient : FusedLocationProviderClient
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -22,6 +27,11 @@ class MainActivity : ComponentActivity() {
                 MainScreen()
             }
         }
+
+
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        ProximityCheck(fusedLocationClient).checkPeriodically()
     }
 }
 

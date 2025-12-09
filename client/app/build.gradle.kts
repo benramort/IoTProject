@@ -2,7 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android) // Kotlin for Android
     alias(libs.plugins.kotlin.compose)
-    //id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.22"
+
 }
 
 
@@ -62,6 +63,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
