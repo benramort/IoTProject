@@ -22,7 +22,7 @@ def init(light_state_i = False, lock_state_i = False):
 
     #configure buzzer
     buzzer_pwm = machine.PWM(machine.Pin(17))
-    buzzer_pwm.freq(4000)
+    buzzer_pwm.duty_u16(512)
     return
 
 
@@ -53,7 +53,15 @@ def get_light_level():
 
 
 def play_sound(freq):
-    buzzer_pwm.duty_u16(freq)
+    if freq == 0:
+        buzzer_pwm.duty_u16(0)
+    else:
+        buzzer_pwm.duty_u16(512)
+        try:
+            buzzer_pwm.freq(freq)
+        except ValueError:
+            print(freq)
+            play_sound(freq + 1)
     return
 
 
