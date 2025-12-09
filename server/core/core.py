@@ -2,7 +2,6 @@ import time
 import sensors.api as api
 import uasyncio
 import math
-from datetime import datetime
 import requests
 import json
 
@@ -74,7 +73,7 @@ def get_GPS_history(start_time : int, end_time : int) -> list:
 
 def subroutine():
     while True:
-        print("Subroutine running")
+        # print("Subroutine running")
         time.sleep(1)
 
 
@@ -127,38 +126,38 @@ def parse_lat_lon(lat_str, ns, lon_str, ew):
     return lat, lon
 
 
-def load_nmea_data(file_path):
-    data_points = []
+# def load_nmea_data(file_path):
+#     data_points = []
 
-    with open(file_path, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if line.startswith('$GPRMC'):
-                parts = line.split(',')
-                if len(parts) < 9:
-                    continue
-                time_str = parts[1]        # hhmmss.sss
-                lat_str = parts[3]
-                ns = parts[4]
-                lon_str = parts[5]
-                ew = parts[6]
-                speed_kmph = float(parts[7])*1.852
-                date_str = parts[9]        # ddmmyy
+#     with open(file_path, 'r') as f:
+#         for line in f:
+#             line = line.strip()
+#             if line.startswith('$GPRMC'):
+#                 parts = line.split(',')
+#                 if len(parts) < 9:
+#                     continue
+#                 time_str = parts[1]        # hhmmss.sss
+#                 lat_str = parts[3]
+#                 ns = parts[4]
+#                 lon_str = parts[5]
+#                 ew = parts[6]
+#                 speed_kmph = float(parts[7])*1.852
+#                 date_str = parts[9]        # ddmmyy
 
-                # Convert time & date to datetime
-                dt = datetime.strptime(date_str + time_str[:6], '%d%m%y%H%M%S')
+#                 # Convert time & date to datetime
+#                 dt = datetime.strptime(date_str + time_str[:6], '%d%m%y%H%M%S')
 
-                # Convert lat/lon to decimal degrees
-                lat, lon = parse_lat_lon(lat_str, ns, lon_str, ew)
+#                 # Convert lat/lon to decimal degrees
+#                 lat, lon = parse_lat_lon(lat_str, ns, lon_str, ew)
 
-                data_points.append({
-                    'timestamp': dt,
-                    'lat': lat,
-                    'lon': lon,
-                    'speed_kmph': speed_kmph
-                })
+#                 data_points.append({
+#                     'timestamp': dt,
+#                     'lat': lat,
+#                     'lon': lon,
+#                     'speed_kmph': speed_kmph
+#                 })
 
-    return data_points
+#     return data_points
 
 
 def send_gps_data(data):
@@ -168,17 +167,17 @@ def send_gps_data(data):
     print(f"Setn: {json.dumps(data)} | Response: {response.status_code}")
 
 
-def stream_gps(file_path):
-    data_points = load_nmea_data(file_path)
-    print(f"Loaded {len(data_points)} GPS points.")
+# def stream_gps(file_path):
+#     data_points = load_nmea_data(file_path)
+#     print(f"Loaded {len(data_points)} GPS points.")
 
-    for point in data_points:
-        payload = {
-            'timestamp': point['timestamp'].isoformat() + "Z",
-            'lat': point['lat'],
-            'lon': point['lon'],
-            'speed_kmph': round(point['speed_kmph'], 2)
-        }
-        send_gps_data(payload)
+#     for point in data_points:
+#         payload = {
+#             'timestamp': point['timestamp'].isoformat() + "Z",
+#             'lat': point['lat'],
+#             'lon': point['lon'],
+#             'speed_kmph': round(point['speed_kmph'], 2)
+#         }
+#         send_gps_data(payload)
 
 

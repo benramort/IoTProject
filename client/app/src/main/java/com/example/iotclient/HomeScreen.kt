@@ -168,7 +168,7 @@ fun ControlsSection(modifier: Modifier = Modifier) {
             icon = Icons.Default.Lightbulb,
             label = "Light",
             modifier = Modifier.weight(1f),
-            onClick = { ServiceProxy().setLight(true) }
+            onClick = { ServiceProxy.setLight(true) }
 
         )
 
@@ -176,7 +176,7 @@ fun ControlsSection(modifier: Modifier = Modifier) {
             icon = Icons.Default.Lock,
             label = "Lock",
             modifier = Modifier.weight(1f),
-            onClick = { ServiceProxy().setLock(true) }
+            onClick = { ServiceProxy.setLock(true) }
 
         )
     }
