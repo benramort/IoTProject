@@ -62,3 +62,35 @@ def set_lock(request):
         print(e)
         utils.send_response(server, "Invalid JSON", 400)
 
+def check_proximity(request):
+    print(request)
+    try:
+        json_start = str.find(request, "{")
+        request_body = request[json_start:]
+        request_json = json.loads(request_body)
+
+        user_lat = request_json["lat"]
+        user_lon = request_json["lon"]
+
+        # Get bike GPS -- I DON'T KNOW FROM WHERE 
+        #bike_lat, bike_lon = api.get_gps()  
+
+        # Use core’s proximity check
+        is_close = core.proximity_check(
+            bike_lon=bike_lon,
+            bike_lat=bike_lat,
+            user_lon=user_lon,
+            user_lat=user_lat
+        )
+
+        if is_close:
+            core.setLock(False)
+
+        response = {"close": is_close}
+        utils.send_response(server, json.dumps(response), 200)
+
+    except (ValueError, KeyError) as e:
+        print(e)
+        utils.send_response(server, "Invalid JSON", 400)
+
+
