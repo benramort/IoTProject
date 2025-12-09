@@ -35,7 +35,6 @@ fun MapScreen(onNavigate: (String) -> Unit) {
     Scaffold(
         bottomBar = { BottomNavigationBar(currentScreen = "map", onNavigate = onNavigate) }
     ) { paddingValues ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -53,30 +52,10 @@ fun MapScreen(onNavigate: (String) -> Unit) {
                         add(Calendar.DAY_OF_MONTH, 1)
                     }
                 },
-                onSelectDay = {
-                    val year = currentDay.get(Calendar.YEAR)
-                    val month = currentDay.get(Calendar.MONTH)
-                    val day = currentDay.get(Calendar.DAY_OF_MONTH)
-
-                    val dialog = DatePickerDialog(
-                        context,
-                        { _, y, m, d ->
-                            currentDay = Calendar.getInstance().apply {
-                                set(y, m, d)
-                            }
-                        },
-                        year, month, day
-                    )
-
-                    // Keep buttons purple
-                    dialog.setOnShowListener {
-                        dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)
-                            ?.setTextColor(PurpleMain.toArgb())
-                        dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)
-                            ?.setTextColor(PurpleMain.toArgb())
+                onDateSelected = { year, month, day ->
+                    currentDay = Calendar.getInstance().apply {
+                        set(year, month, day)
                     }
-
-                    dialog.show()
                 }
             )
 
@@ -109,7 +88,6 @@ fun FakeMapCanvas(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier) {
         drawRect(color = Color(0xFFDBDBDB))
 
-        // Draw route lines
         for (i in 0 until routePoints.size - 1) {
             val (start, speed, _) = routePoints[i]
             val (end, _, _) = routePoints[i + 1]
@@ -129,7 +107,6 @@ fun FakeMapCanvas(modifier: Modifier = Modifier) {
             )
         }
 
-        // Draw key points
         routePoints.forEach { (pos, _, label) ->
             val px = pos.first * size.width
             val py = pos.second * size.height
@@ -170,7 +147,10 @@ fun RouteLegend(modifier: Modifier = Modifier) {
 
 @Composable
 fun LegendItem(color: Color, text: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 4.dp)
+    ) {
         Box(
             modifier = Modifier
                 .size(18.dp)
@@ -186,7 +166,7 @@ fun MapTopBar(
     currentDay: Calendar,
     onPreviousDay: () -> Unit,
     onNextDay: () -> Unit,
-    onSelectDay: () -> Unit
+    onDateSelected: (Int, Int, Int) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -210,21 +190,28 @@ fun MapTopBar(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = {
-                // Ensure this is called inside an actual Activity context
+                // Properly create and show DatePickerDialog
                 val year = currentDay.get(Calendar.YEAR)
                 val month = currentDay.get(Calendar.MONTH)
                 val day = currentDay.get(Calendar.DAY_OF_MONTH)
 
-                DatePickerDialog(context, { _, y, m, d ->
-                    currentDay.time = Calendar.getInstance().apply {
-                        set(y, m, d)
-                    }.time
-                }, year, month, day).apply {
-                    setOnShowListener {
-                        getButton(DatePickerDialog.BUTTON_POSITIVE)?.setTextColor(PurpleMain.toArgb())
-                        getButton(DatePickerDialog.BUTTON_NEGATIVE)?.setTextColor(PurpleMain.toArgb())
-                    }
-                }.show()
+                val dialog = DatePickerDialog(
+                    context,
+                    { _, selectedYear, selectedMonth, selectedDay ->
+                        onDateSelected(selectedYear, selectedMonth, selectedDay)
+                    },
+                    year,
+                    month,
+                    day
+                )
+
+                // Set button colors after dialog is created
+                dialog.setOnShowListener {
+                    dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)?.setTextColor(PurpleMain.toArgb())
+                    dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)?.setTextColor(PurpleMain.toArgb())
+                }
+
+                dialog.show()
             }) {
                 Icon(Icons.Default.CalendarToday, contentDescription = "Select Day")
             }
@@ -239,9 +226,6 @@ fun MapTopBar(
 }
 
 
-// -------------------------------------------------------
-// BOTTOM NAVIGATION BAR
-// -------------------------------------------------------
 @Composable
 fun BottomNavigationBar(currentScreen: String, onNavigate: (String) -> Unit) {
     Surface(
@@ -262,27 +246,32 @@ fun BottomNavigationBar(currentScreen: String, onNavigate: (String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { onNavigate("map") }) {
-                Icon(Icons.Default.Map,
+                Icon(
+                    Icons.Default.Map,
                     contentDescription = "Map",
                     tint = if (currentScreen == "map") PurpleMain else Color(0xFF666666),
-                    modifier = Modifier.size(30.dp))
+                    modifier = Modifier.size(30.dp)
+                )
             }
             IconButton(onClick = { onNavigate("home") }) {
-                Icon(Icons.Default.Home,
+                Icon(
+                    Icons.Default.Home,
                     contentDescription = "Home",
-                    tint = Color.Black,
-                    modifier = Modifier.size(28.dp))
+                    tint = if (currentScreen == "home") PurpleMain else Color.Black,
+                    modifier = Modifier.size(28.dp)
+                )
             }
             IconButton(onClick = { onNavigate("settings") }) {
-                Icon(Icons.Default.Settings,
+                Icon(
+                    Icons.Default.Settings,
                     contentDescription = "Settings",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(30.dp))
+                    tint = if (currentScreen == "settings") PurpleMain else Color.Gray,
+                    modifier = Modifier.size(30.dp)
+                )
             }
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
