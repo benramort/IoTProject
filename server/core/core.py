@@ -4,14 +4,15 @@ import uasyncio
 import math
 
 
-_auto_lights_level_on = None
-_auto_lights_level_off = None
+_auto_lights_level_on = 0
+_auto_lights_level_off = 0
 
-def configure_settings(enable_auto_ligth : bool, auto_ligth_level_on : float, auto_ligth_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
+def configure_settings(enable_auto_ligths : bool, auto_ligths_level_on : float, auto_ligths_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
     print("Auto light: {}, On level: {:.2f}, Off level: {:.2f}, Proximity lock: {}, Proximity lock meters: {:.2f}".format(
         enable_auto_ligths, auto_ligths_level_on, auto_ligths_level_off, enable_proximity_lock, proximity_lock_meters))
-    _auto_lights_level_on = auto_lights_level_on
-    _auto_lights_level_off = auto_lights_level_off
+    global _auto_lights_level_on, _auto_lights_level_off
+    _auto_lights_level_on = auto_ligths_level_on
+    _auto_lights_level_off = auto_ligths_level_off
 
 def get_sensor_data() -> dict:
     timestamp = time.time() # This maybe doesnt work as is should
@@ -40,7 +41,7 @@ def auto_lights_check():
     current_level = api.get_light_level()
     if current_level < _auto_lights_level_on:
         api.turn_lights_on()
-    else if current_level > _auto_lights_level_off:
+    elif current_level > _auto_lights_level_off:
         api.turn_lights_off()
     return
 

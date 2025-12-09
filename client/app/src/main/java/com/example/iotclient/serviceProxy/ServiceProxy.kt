@@ -17,7 +17,7 @@ class ServiceProxy {
         val client = OkHttpClient()
     }
 
-    val baseUrl = "http://192.168.137.164:80"
+    val baseUrl = "http://10.42.0.94:80"
 
     fun fetch() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -40,6 +40,7 @@ class ServiceProxy {
             val jsonBody = Json.encodeToString(state)
 
             // Create request body
+            Log.d("myApp", jsonBody)
             val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
 
             // Build PUT request

@@ -47,6 +47,7 @@ def set_ligth(request):
         request_body = request[json_start : ]
         request_json = json.loads(request_body)
         core.setLight(request_json["state"])
+        utils.send_response(server, "OK", 200)
     except (ValueError, KeyError) as e:
         print(e)
         utils.send_response(server, "Invalid JSON", 400)

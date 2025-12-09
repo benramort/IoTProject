@@ -16,7 +16,7 @@ print(sta_if.ifconfig()[0])
 if (sta_if.isconnected() == False):
     raise Exception("WiFi not connected")
 
-# api.init()
+api.init()
 
 _thread.start_new_thread(core.subroutine, ())
 
@@ -25,7 +25,7 @@ facade.set_server(server)
 server.add_route("/", facade.hello_world)
 server.add_route("/settings", facade.configure_settings, "PUT")
 server.add_route("/sensors", facade.get_sensor_data, "GET")
-server.add_route("/ligth", facade.set_ligth, "PUT")
+server.add_route("/light", facade.set_ligth, "PUT")
 server.start()
 
 
