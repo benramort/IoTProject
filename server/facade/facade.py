@@ -62,3 +62,7 @@ def set_lock(request):
         print(e)
         utils.send_response(server, "Invalid JSON", 400)
 
+def find_mode(request):
+    #request - HTTP request in text
+    #add listener to the main.py
+    ...

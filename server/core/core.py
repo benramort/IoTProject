@@ -40,7 +40,7 @@ def auto_lights_check():
     current_level = api.get_light_level()
     if current_level < _auto_lights_level_on:
         api.turn_lights_on()
-    else if current_level > _auto_lights_level_off:
+    elif current_level > _auto_lights_level_off:
         api.turn_lights_off()
     return
 
