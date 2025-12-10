@@ -65,15 +65,22 @@ def find_mode():
         api.turn_lights_off()
         time.sleep_ms(int(duration * 0.3))   # 30% spacing
 
-def get_GPS_history(start_time : int, end_time : int) -> list:
-    ...
-
-
 def subroutine():
     global activate_find_mode
+    counter = 1
+    global current_lat, current_lon
+    current_lat = 65.059941
+    current_lon = 25.466049
     while True:
         # print("Subroutine running")
         if activate_find_mode:
             find_mode()
             activate_find_mode = False
+        if counter % 10 == 5:
+            current_lat = 45.813027
+            current_lon = 15.977569
+        elif counter % 10 == 0:
+            current_lat = 65.059941
+            current_lon = 25.466049
+        counter += 1
         time.sleep(1)
