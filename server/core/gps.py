@@ -62,8 +62,8 @@ def load_nmea_data(file_path, date1, date2):
 
     return data_points
 
-def get_gps(file_path, date1, date2):
-    data_points = load_nmea_data(file_path, date1, date2)
+def get_gps(date1, date2):
+    data_points = load_nmea_data('docs/nmea_data.nmea', date1, date2)
     print(f"Loaded {len(data_points)} GPS points.")
 
     for point in data_points:
