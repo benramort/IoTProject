@@ -7,6 +7,9 @@ _auto_lights_level_off = 0
 _auto_lights_enable = False
 activate_find_mode = False
 
+current_lat = 65.059941
+current_lon = 25.466049
+
 def configure_settings( enable_auto_lights : bool, auto_lights_level_on : float, 
         auto_lights_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
     print("Auto light: {}, On level: {:.2f}, Off level: {:.2f}, \

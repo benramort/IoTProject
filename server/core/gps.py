@@ -63,9 +63,10 @@ def load_nmea_data(file_path, date1, date2):
     return data_points
 
 def get_gps(date1, date2):
-    data_points = load_nmea_data('docs/nmea_data.nmea', date1, date2)
+    data_points = load_nmea_data('core/nmea_data.nmea', date1, date2)
     print(f"Loaded {len(data_points)} GPS points.")
-
+    
+    json_list = []
     for point in data_points:
         payload = {
             'timestamp': point['timestamp'],
@@ -73,8 +74,8 @@ def get_gps(date1, date2):
             'lon': point['lon'],
             'speed_kmph': round(point['speed_kmph'], 2)
         }
-        json_payload =json.dumps(payload)
-        yield json_payload
+        json_list.append(payload)
+    return json.dumps(json_list)
 
 def rad(x):
     return x * 0.017453292519943295  # π/180

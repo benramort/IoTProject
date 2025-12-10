@@ -29,6 +29,9 @@ def init(light_state_i = False, lock_state_i = False):
     #configure buzzer
     buzzer_pwm = machine.PWM(machine.Pin(17))
     buzzer_pwm.duty_u16(512)
+    
+    #configure temp sensor
+    get_temperature()
 
     #configure display
     #print(i2c.scan())
