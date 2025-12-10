@@ -11,7 +11,7 @@ sta_if = network.WLAN(network.STA_IF)
 sta_if.active(True)
 print('Connecting to debian')
 sta_if.connect('debian', '12345678')
-print(sta_if.isconnected())
+print("Connected:", sta_if.isconnected())
 print(sta_if.ifconfig()[0])
 
 if (sta_if.isconnected() == False):

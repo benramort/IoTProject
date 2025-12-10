@@ -4,14 +4,20 @@ import uasyncio
 
 _auto_lights_level_on = 0
 _auto_lights_level_off = 0
+_auto_lights_enable = False
 activate_find_mode = False
 
-def configure_settings(enable_auto_ligths : bool, auto_ligths_level_on : float, auto_ligths_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
-    print("Auto light: {}, On level: {:.2f}, Off level: {:.2f}, Proximity lock: {}, Proximity lock meters: {:.2f}".format(
-        enable_auto_ligths, auto_ligths_level_on, auto_ligths_level_off, enable_proximity_lock, proximity_lock_meters))
+def configure_settings( enable_auto_ligths : bool, auto_ligths_level_on : float, 
+        auto_ligths_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
+    print("Auto light: {}, On level: {:.2f}, Off level: {:.2f}, \
+            Proximity lock: {}, Proximity lock meters: {:.2f}".format(
+        enable_auto_ligths, auto_ligths_level_on, 
+        auto_ligths_level_off, enable_proximity_lock, proximity_lock_meters))
+
     global _auto_lights_level_on, _auto_lights_level_off
     _auto_lights_level_on = auto_ligths_level_on
     _auto_lights_level_off = auto_ligths_level_off
+    _auto_lights_enable = enable_auto_lights
 
 def get_sensor_data() -> dict:
     timestamp = time.time() # This maybe doesnt work as is should
@@ -76,4 +82,6 @@ def subroutine():
         if activate_find_mode:
             find_mode()
             activate_find_mode = False
+        if _auto_lights_enable:
+            auto_lights_check()
         time.sleep(1)
