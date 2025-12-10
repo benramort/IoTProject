@@ -1,50 +1,33 @@
 import time
 import api
 
+
+def screen():
+    import ssd1306
+
+    i2c = machine.I2C(0, sda=machine.Pin(12), scl=machine.Pin(13), freq=100000)
+    #time.sleep(1)
+    print(i2c.scan())
+    #i2c.writeto(0x3C, b'\x00\xAE')  # display off
+    #i2c.writeto(0x3C, b'\x40\xFF')  # try write data manually
+    #i2c.writeto(0x3C, b'\x00\xAE')
+    time.sleep(1)
+    oled = ssd1306.SSD1306_I2C(128, 64, i2c)
+    time.sleep(1)
+    #oled.write_cmd(0xAE)
+    print(i2c.scan())
+    oled.invert(True)
+    oled.fill(1)
+    oled.show()
+    i2c.writeto(0x3C, b'\x00\xAE')       # display off
+    i2c.writeto(0x3C, b'\x40\xFF')       # write 1 byte of data
+    i2c.writeto(0x3C, b'\x00\xAF')       # display on
+
+
+
 api.init()
-
-wish = [
-    (247, 250),
-    (349, 250), (349, 125), (392, 125), (349, 125), (330, 125),
-    (294, 250), (294, 250), (294, 250),
-    (392, 250), (392, 125), (440, 125), (392, 125), (349, 125),
-    (330, 250), (330, 250), (330, 250),
-    (440, 250), (440, 125), (494, 125), (440, 125), (392, 125),
-    (349, 250), (294, 250), (247, 125), (247, 125),
-    (294, 250), (392, 250), (330, 250),
-    (349, 500)
-]
-
-
-
-def play(song):
-    for freq, duration in song:
-        api.play_sound(freq)
-        api.turn_lights_on()
-        time.sleep_ms(duration)
-        api.play_sound(0)
-        api.turn_lights_off()
-        time.sleep_ms(int(duration * 0.3))   # 30% spacing
-
-
-def find_mode():
-    play(wish)
-    counter = 10
-    while counter > 0:
-        counter -= 1
-        api.toggle_lights()
-        time.sleep_ms(500)
 
 while True:
     print("Temperature:", api.get_temperature())
     print("Light level:", api.get_light_level())
-    #api.turn_lights_off()
-    #api.play_sound(33000)
-    #api.lock_bike()
-    #time.sleep(1)
-    #api.turn_lights_on()
-    #api.play_sound(0)
-    #api.unlock_bike()
-    find_mode()
-    break
-    time.sleep(1)
+    time.sleep(3)

@@ -47,6 +47,7 @@ def set_ligth(request):
         request_body = request[json_start : ]
         request_json = json.loads(request_body)
         core.setLight(request_json["state"])
+        utils.send_response(server, "OK", 200)
     except (ValueError, KeyError) as e:
         print(e)
         utils.send_response(server, "Invalid JSON", 400)
@@ -61,4 +62,36 @@ def set_lock(request):
     except (ValueError, KeyError) as e:
         print(e)
         utils.send_response(server, "Invalid JSON", 400)
+
+
+def find_mode(request):
+    #request - HTTP request in text
+    #add listener to the main.py
+    core.activate_find_mode = True
+    utils.send_response(server, "OK", 200)
+
+
+def check_proximity(request):
+    print(request)
+    try:
+        json_start = str.find(request, "{")
+        request_body = request[json_start:]
+        request_json = json.loads(request_body)
+
+        user_lat = request_json["lat"]
+        user_lon = request_json["lon"]
+
+        # Use core’s proximity check
+        is_close = core.proximity_check(
+            user_lon=user_lon,
+            user_lat=user_lat
+        )
+
+        response = {"close": is_close}
+        utils.send_response(server, json.dumps(response), 200)
+
+    except (ValueError, KeyError) as e:
+        print(e)
+        utils.send_response(server, "Invalid JSON", 400)
+
 
