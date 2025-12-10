@@ -1,5 +1,6 @@
 import json
 import math
+import core
 
 def parse_lat_lon(lat_str, ns, lon_str, ew):
     lat_deg = int(lat_str[:2])
@@ -93,3 +94,9 @@ def proximity_check(bike_lon, bike_lat, user_lon, user_lat):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     distance = R * c  # distance in meters
     return distance <= 15
+
+def get_current_position():
+    return{
+        "lat": core.current_lat,
+        "lon": core.current_lon
+    }
