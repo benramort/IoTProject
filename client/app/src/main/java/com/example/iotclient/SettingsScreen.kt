@@ -36,6 +36,8 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
     var unlockDistance by remember { mutableStateOf("1 m") }
     val distanceOptions = listOf("0.5 m", "1 m", "2 m", "5 m", "10 m")
 
+    var findmode by remember { mutableStateOf(false) }
+
     var selectedLanguage by remember { mutableStateOf("English") }
     val languageOptions = listOf("English", "Español")
 
@@ -99,6 +101,13 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // FIND MODE
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                Text(if (selectedLanguage == "Español") "Modo de búsqueda automático" else "Enable find mode")
+                Spacer(modifier = Modifier.width(12.dp))
+                Switch(checked = findmode, onCheckedChange = { findmode = it })
+            }
+
             // LANGUAGE
             SimpleDropdown(
                 options = languageOptions,
@@ -117,6 +126,7 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
                     println("Light Level: $lightTemperature")
                     println("Auto Unlock: $autoUnlock")
                     println("Unlock Distance: $unlockDistance")
+                    println("Find Mode: $findmode")
                     println("Language: $selectedLanguage")
                 },
                 modifier = Modifier.align(Alignment.End),

@@ -12,27 +12,60 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class ServiceProxy {
-
     private companion object {
         val client = OkHttpClient()
     }
 
-    val baseUrl = "http://10.42.0.94:80"
+    val baseUrl = "http://10.42.0.55:80"
 
-    fun fetch() {
+    fun getTemperature(onResult: (Double?) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
-            val request = Request.Builder()
-                .url(baseUrl)
-                .build()
-
-            val response = client.newCall(request).execute()
             try {
-                Log.d("MyApp", response.body?.string() ?:"")
-            } finally {
+                val request = Request.Builder()
+                    .url("$baseUrl/sensors")  // GET all sensor data
+                    .get()
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val body = response.body?.string()
                 response.close()
+
+                // Parse JSON and extract temperature
+                val json = Json.parseToJsonElement(body ?: "{}").jsonObject
+                val temperature = json["temperature"]?.jsonPrimitive?.doubleOrNull
+
+                onResult(temperature)
+            } catch (e: Exception) {
+                Log.e("MyApp", "Error getting temperature", e)
+                onResult(null)
             }
         }
     }
+
+    fun getLightLevel(onResult: (Double?) -> Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val request = Request.Builder()
+                    .url("$baseUrl/sensors")  // GET all sensor data
+                    .get()
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val body = response.body?.string()
+                response.close()
+
+                // Parse JSON and extract light level
+                val json = Json.parseToJsonElement(body ?: "{}").jsonObject
+                val lightLevel = json["ligth_level"]?.jsonPrimitive?.doubleOrNull
+
+                onResult(lightLevel)
+            } catch (e: Exception) {
+                Log.e("MyApp", "Error getting light level", e)
+                onResult(null)
+            }
+        }
+    }
+
 
     fun setLight(status: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {

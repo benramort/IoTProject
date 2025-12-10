@@ -2,7 +2,6 @@ import time
 import sensors.api as api
 import uasyncio
 import math
-from datetime import datetime
 import requests
 import json
 
@@ -126,7 +125,7 @@ def parse_lat_lon(lat_str, ns, lon_str, ew):
 
     return lat, lon
 
-
+"""
 def load_nmea_data(file_path):
     data_points = []
 
@@ -159,7 +158,7 @@ def load_nmea_data(file_path):
                 })
 
     return data_points
-
+"""
 
 def send_gps_data(data):
     url = "http://localhost:5000/gps" #has to be actual destination
@@ -167,7 +166,7 @@ def send_gps_data(data):
     response = requests.post(url, headers = headers, data = json.dumps(data))
     print(f"Setn: {json.dumps(data)} | Response: {response.status_code}")
 
-
+"""
 def stream_gps(file_path):
     data_points = load_nmea_data(file_path)
     print(f"Loaded {len(data_points)} GPS points.")
@@ -180,5 +179,5 @@ def stream_gps(file_path):
             'speed_kmph': round(point['speed_kmph'], 2)
         }
         send_gps_data(payload)
-
+"""
 
