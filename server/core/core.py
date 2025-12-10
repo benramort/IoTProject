@@ -7,17 +7,18 @@ _auto_lights_level_off = 0
 _auto_lights_enable = False
 activate_find_mode = False
 
-def configure_settings( enable_auto_ligths : bool, auto_ligths_level_on : float, 
-        auto_ligths_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
+def configure_settings( enable_auto_lights : bool, auto_lights_level_on : float, 
+        auto_lights_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
     print("Auto light: {}, On level: {:.2f}, Off level: {:.2f}, \
             Proximity lock: {}, Proximity lock meters: {:.2f}".format(
-        enable_auto_ligths, auto_ligths_level_on, 
-        auto_ligths_level_off, enable_proximity_lock, proximity_lock_meters))
+        enable_auto_lights, auto_lights_level_on, 
+        auto_lights_level_off, enable_proximity_lock, proximity_lock_meters))
 
-    global _auto_lights_level_on, _auto_lights_level_off
-    _auto_lights_level_on = auto_ligths_level_on
-    _auto_lights_level_off = auto_ligths_level_off
+    global _auto_lights_level_on, _auto_lights_level_off, _auto_lights_enable
+    _auto_lights_level_on = auto_lights_level_on
+    _auto_lights_level_off = auto_lights_level_off
     _auto_lights_enable = enable_auto_lights
+
 
 def get_sensor_data() -> dict:
     timestamp = time.time() # This maybe doesnt work as is should
@@ -44,6 +45,7 @@ def setLight(state : bool):
 
 def auto_lights_check():
     current_level = api.get_light_level()
+    #print(f"Current: {current_level}. On: {_auto_lights_level_on}. Off: {_auto_lights_level_off}.")
     if current_level < _auto_lights_level_on:
         api.turn_lights_on()
     elif current_level > _auto_lights_level_off:
@@ -78,7 +80,7 @@ def get_GPS_history(start_time : int, end_time : int) -> list:
 def subroutine():
     global activate_find_mode
     while True:
-        # print("Subroutine running")
+        #print("Subroutine running")
         if activate_find_mode:
             find_mode()
             activate_find_mode = False

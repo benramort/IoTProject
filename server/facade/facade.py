@@ -22,9 +22,9 @@ def configure_settings(request):
         request_json = json.loads(request_body)
 
         core.configure_settings(
-            request_json["auto_ligth"],
-            request_json["auto_ligth_level_on"],
-            request_json["auto_ligth_level_off"],
+            request_json["auto_light"],
+            request_json["auto_light_level_on"],
+            request_json["auto_light_level_off"],
             request_json["proximity_lock"],
             request_json["proximity_meters"])
 
