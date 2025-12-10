@@ -1,10 +1,6 @@
 import time
 import sensors.api as api
 import uasyncio
-import math
-from datetime import datetime
-import requests
-import json
 
 _auto_lights_level_on = 0
 _auto_lights_level_off = 0
