@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -34,8 +36,16 @@ val BackgroundSoft = Color(0xFFF9F7FC)
 @Composable
 fun HomeScreen(
     currentScreen: String,
+    viewModel: MainViewModel,
     onNavigate: (String) -> Unit
 ) {
+    val lightLevel = viewModel.ligthLevel.collectAsState().value
+    val temperature = viewModel.temperature.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        viewModel.updateData()
+    }
+
     Scaffold(
         bottomBar = { BottomNavigationBar(currentScreen, onNavigate) }
     ) { paddingValues ->
@@ -57,7 +67,7 @@ fun HomeScreen(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                EnvironmentInfoSection()
+                EnvironmentInfoSection(lightLevel, temperature)
             }
 
             // Divider in middle
@@ -86,7 +96,7 @@ fun HomeScreen(
 // ENVIRONMENT INFO
 // -------------------------------------------------------
 @Composable
-fun EnvironmentInfoSection(modifier: Modifier = Modifier) {
+fun EnvironmentInfoSection(lightLevel : Float?, temperature : Float?, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -95,14 +105,14 @@ fun EnvironmentInfoSection(modifier: Modifier = Modifier) {
         InfoCard(
             icon = Icons.Default.Thermostat,
             label = "Temperature",
-            value = "15.6°",
+            value = temperature?.toString() ?: "--",
             modifier = Modifier.weight(1f)
         )
 
         InfoCard(
             icon = Icons.Default.WbSunny,
             label = "Light",
-            value = "S.W Lr",
+            value = lightLevel?.toString() ?: "--",
             modifier = Modifier.weight(1f)
         )
     }
@@ -275,10 +285,14 @@ fun BottomNavigationBar(currentScreen: String,onNavigate: (String) -> Unit) {
 // -------------------------------------------------------
 // PREVIEW
 // -------------------------------------------------------
+/*
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
+    val mainViewModel = MainViewModel();
     MaterialTheme {
-        HomeScreen(currentScreen = "home", onNavigate = {})
+        HomeScreen(currentScreen = "home", onNavigate = {}, viewModel = mainViewModel)
     }
 }
+*/
+

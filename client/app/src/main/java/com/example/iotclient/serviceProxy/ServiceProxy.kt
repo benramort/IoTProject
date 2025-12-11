@@ -9,6 +9,7 @@ import kotlinx.serialization.encodeToString
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import kotlinx.serialization.json.*
+import okhttp3.Dispatcher
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
@@ -90,5 +91,25 @@ object ServiceProxy {
             Log.d("MyApp", "Lock response: ${response.code}")
             response.close()
 
+        }
+
+
     }
-} }
+
+    fun getSensorData(): SensorDTO {
+        val request = Request.Builder()
+            .url("$baseUrl/sensors")
+            .get()
+            .build()
+
+        val response = client.newCall(request).execute()
+
+        val body = response.body?.string()
+            ?: throw IllegalStateException("Response body was null")
+
+        Log.d("myApp", body)
+        response.close()
+
+        return Json.decodeFromString(body)
+    }
+}
