@@ -118,7 +118,7 @@ object ServiceProxy {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val request = Request.Builder()
-                    .url("$baseUrl/findmode")
+                    .url("$baseUrl/findMode")
                     .post("".toRequestBody(null))
                     .build()
 
