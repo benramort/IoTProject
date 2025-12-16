@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.iotclient.serviceProxy.ServiceProxy
+import kotlinx.coroutines.Dispatchers
 
 val PurpleMain = Color(0xFF7C4DFF)
 val PurpleSoft = Color(0xFFEDE7F6)
@@ -35,6 +37,8 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
     var autoUnlock by remember { mutableStateOf(false) }
     var unlockDistance by remember { mutableStateOf("1 m") }
     val distanceOptions = listOf("0.5 m", "1 m", "2 m", "5 m", "10 m")
+
+    var findmode by remember { mutableStateOf(false) }
 
     var selectedLanguage by remember { mutableStateOf("English") }
     val languageOptions = listOf("English", "Español")
@@ -99,6 +103,33 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // FIND MODE
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    if (selectedLanguage == "Español")
+                        "Activar modo de búsqueda"
+                    else
+                        "Activate find mode"
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(onClick = {
+                    ServiceProxy.triggerFindMode()
+                }) {
+                    Text(
+                        if (selectedLanguage == "Español")
+                            "Buscar"
+                        else
+                            "Find"
+                    )
+                }
+            }
+
+
             // LANGUAGE
             SimpleDropdown(
                 options = languageOptions,
@@ -117,6 +148,7 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
                     println("Light Level: $lightTemperature")
                     println("Auto Unlock: $autoUnlock")
                     println("Unlock Distance: $unlockDistance")
+                    println("Find Mode: $findmode")
                     println("Language: $selectedLanguage")
                 },
                 modifier = Modifier.align(Alignment.End),

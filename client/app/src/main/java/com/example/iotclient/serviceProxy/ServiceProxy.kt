@@ -113,4 +113,23 @@ object ServiceProxy {
 
         return Json.decodeFromString(body)
     }
+
+    fun triggerFindMode() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val request = Request.Builder()
+                    .url("$baseUrl/findMode")
+                    .get()
+                    .build()
+
+                val response = client.newCall(request).execute()
+                Log.d("MyApp", "FindMode response: ${response.code}")
+                response.close()
+            } catch (e: Exception) {
+                Log.e("MyApp", "FindMode error", e)
+            }
+        }
+    }
+
+
 }
