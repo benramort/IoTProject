@@ -1,36 +1,40 @@
 package com.example.iotclient
 
+import android.content.Context
 import android.location.Location
 import android.util.Log
-import com.example.iotclient.serviceProxy.ServiceProxy
-import com.google.android.gms.location.FusedLocationProviderClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
-class ProximityCheck (val fusedLocationClient : FusedLocationProviderClient){
+import com.example.iotclient.serviceProxy.ServiceProxy
 
-    fun checkPeriodically() {
-        CoroutineScope(Dispatchers.Default).launch {
+class ProximityCheck() {
+
+    private val scope = CoroutineScope(Dispatchers.Default)
+
+    fun start() {
+        scope.launch {
             while (true) {
                 try {
-                    fusedLocationClient.lastLocation
-                        .addOnSuccessListener { location : Location? ->
-                            Log.d("myApp", location.toString())
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                ServiceProxy.proximityCheck(location)
-                            }
-                        }.addOnFailureListener { result -> Log.e("myApp", result.toString()) }
-                } catch (ex: SecurityException) {
-                    Log.e("myApp","Location permission not granted")
+                    // Simulate a location
+                    val location = Location("mock").apply {
+                        latitude = 65.059950
+                        longitude = 25.466049
+                        accuracy = 5f
+                    }
+
+                    Log.d("myApp", "Simulated location: $location")
+                    ServiceProxy.proximityCheck(location)
+
+                } catch (ex: Exception) {
+                    Log.e("myApp", "Error in proximity loop", ex)
                 }
 
-                delay(1000)
+                delay(1000) // 1 second interval
             }
         }
-
     }
-
 }

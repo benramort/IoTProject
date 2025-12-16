@@ -17,9 +17,16 @@ import com.example.weddingapp.ui.settings.SettingsScreen
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+
+import android.content.Context
+
 class MainActivity : ComponentActivity() {
 
-    private lateinit var fusedLocationClient : FusedLocationProviderClient
+	private lateinit var fusedLocationClient : FusedLocationProviderClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,12 +37,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-
-        /*
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        ProximityCheck(fusedLocationClient).checkPeriodically()
-
-         */
+	ProximityCheck().start()
     }
 }
 

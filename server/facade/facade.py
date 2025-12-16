@@ -109,6 +109,8 @@ def check_proximity(request):
             bike_lat=core.current_lat
         )
 
+        core.setLock(not is_close)
+        
         response = {"close": is_close}
         utils.send_response(server, json.dumps(response), 200)
 
