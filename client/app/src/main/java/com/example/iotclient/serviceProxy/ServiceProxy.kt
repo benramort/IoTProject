@@ -131,5 +131,30 @@ object ServiceProxy {
         }
     }
 
+    fun submitSettings(auto_light : Boolean,
+                       auto_light_level_on : String,
+                       auto_light_level_off: String,
+                       proximity_lock : Boolean,
+                       proximity_meters : String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val SettingsDTO = SettingsDTO(auto_light, auto_light_level_on.toFloat(), auto_light_level_off.toFloat(), proximity_lock, proximity_meters.toFloat())
+                val json = Json.encodeToString(SettingsDTO)
+                Log.d("myApp", json)
+                val request = Request.Builder()
+                    .url(baseUrl+"/settings")
+                    .put(json.toRequestBody("application/json; charset=utf-8".toMediaType()))
+                    .build()
+
+                val response = client.newCall(request).execute()
+
+                response.close()
+
+            } catch (e: Exception){
+                Log.e("MyApp", "Submit Error", e)
+            }
+        }
+    }
+
 
 }

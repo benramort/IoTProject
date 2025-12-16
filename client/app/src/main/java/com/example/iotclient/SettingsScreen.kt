@@ -21,7 +21,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.iotclient.serviceProxy.ServiceProxy
-import kotlinx.coroutines.Dispatchers
 
 val PurpleMain = Color(0xFF7C4DFF)
 val PurpleSoft = Color(0xFFEDE7F6)
@@ -31,12 +30,14 @@ val BackgroundSoft = Color(0xFFF9F7FC)
 fun SettingsScreen(onNavigate: (String) -> Unit) {
 
     var autoLight by remember { mutableStateOf(false) }
-    var lightTemperature by remember { mutableStateOf("20°C") }
-    val lightOptions = listOf("15°C", "20°C", "25°C", "30°C")
+    var lightLevelOn by remember { mutableStateOf("300") }
+    val lightOptionsOn = listOf("100", "300", "500", "700", "800", "1000")
+    var lightLevelOff by remember { mutableStateOf("300") }
+    val lightOptionsOff = listOf("1000", "1200", "1400", "1800", "2000", "2200")
 
     var autoUnlock by remember { mutableStateOf(false) }
-    var unlockDistance by remember { mutableStateOf("1 m") }
-    val distanceOptions = listOf("0.5 m", "1 m", "2 m", "5 m", "10 m")
+    var unlockDistance by remember { mutableStateOf("1") }
+    val distanceOptions = listOf("0.5", "1", "2", "5", "10")
 
     var findmode by remember { mutableStateOf(false) }
 
@@ -75,10 +76,17 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
             if (autoLight) {
                 Spacer(modifier = Modifier.height(8.dp))
                 SimpleDropdown(
-                    options = lightOptions,
-                    selectedOption = lightTemperature,
-                    onOptionSelected = { lightTemperature = it },
-                    label = if (selectedLanguage == "Español") "Nivel de luz" else "Light level"
+                    options = lightOptionsOn,
+                    selectedOption = lightLevelOn,
+                    onOptionSelected = { lightLevelOn = it },
+                    label = if (selectedLanguage == "Español") "Nivel de luz para encendido" else "Light level on"
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                SimpleDropdown(
+                    options = lightOptionsOff,
+                    selectedOption = lightLevelOff,
+                    onOptionSelected = { lightLevelOff = it },
+                    label = if (selectedLanguage == "Español") "Nivel de luz para apagado" else "Light level off"
                 )
             }
 
@@ -143,13 +151,7 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
             // SUBMIT BUTTON
             Button(
                 onClick = {
-                    println("----- SETTINGS SUBMITTED -----")
-                    println("Auto Light: $autoLight")
-                    println("Light Level: $lightTemperature")
-                    println("Auto Unlock: $autoUnlock")
-                    println("Unlock Distance: $unlockDistance")
-                    println("Find Mode: $findmode")
-                    println("Language: $selectedLanguage")
+                    ServiceProxy.submitSettings(autoLight, lightLevelOn, lightLevelOff, autoUnlock,  unlockDistance)
                 },
                 modifier = Modifier.align(Alignment.End),
                 colors = ButtonDefaults.buttonColors(
