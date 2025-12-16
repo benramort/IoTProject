@@ -1,6 +1,5 @@
 package com.example.iotclient
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.iotclient.serviceProxy.ServiceProxy
 import kotlinx.coroutines.CoroutineScope
@@ -30,16 +29,11 @@ class MainViewModel: ViewModel() {
 
     fun updateData() {
         viewModelScope.launch {
-            try {
-                val sensorDTO = ServiceProxy.getSensorData()
-                _lightState.value = sensorDTO.light_state
-                _lockState.value = sensorDTO.lock_state
-                _ligthLevel.value = sensorDTO.light_level
-                _temperature.value = sensorDTO.temperature
-            } catch (e : Exception) {
-                Log.d("myApp", "A network exception has occured")
-            }
-
+            val sensorDTO = ServiceProxy.getSensorData()
+            _lightState.value = sensorDTO.light_state
+            _lockState.value = sensorDTO.lock_state
+            _ligthLevel.value = sensorDTO.light_level
+            _temperature.value = sensorDTO.temperature
         }
 
     }
