@@ -16,7 +16,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 object ServiceProxy {
 
     private val client = OkHttpClient()
-    private const val baseUrl = "http://10.42.0.55:80"
+    private const val baseUrl = "http://10.42.0.94:80"
 
     fun fetch() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -51,8 +51,8 @@ object ServiceProxy {
         }
     }
 
-    fun setLight(status: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
+    fun setLight(status: Boolean) : Boolean {
+
             val state = State(status)
             val jsonBody = Json.encodeToString(state)
 
@@ -69,12 +69,12 @@ object ServiceProxy {
             val response = client.newCall(request).execute()
             Log.d("MyApp", "Light response: ${response.code}")
             response.close()
-        }
+        return response.code == 200
 
     }
 
-    fun setLock(status: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
+    fun setLock(status: Boolean) : Boolean {
+
             val state = State(status)
             val jsonBody = Json.encodeToString(state)
 
@@ -90,8 +90,9 @@ object ServiceProxy {
             val response = client.newCall(request).execute()
             Log.d("MyApp", "Lock response: ${response.code}")
             response.close()
+            return response.code == 200
 
-        }
+
 
 
     }
