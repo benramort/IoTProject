@@ -5,6 +5,7 @@ import uasyncio
 _auto_lights_level_on = 0
 _auto_lights_level_off = 0
 _auto_lights_enable = False
+_proximity_lock_enable = False
 activate_find_mode = False
 
 current_lat = 65.059941
@@ -17,10 +18,11 @@ def configure_settings( enable_auto_lights : bool, auto_lights_level_on : float,
         enable_auto_lights, auto_lights_level_on, 
         auto_lights_level_off, enable_proximity_lock, proximity_lock_meters))
 
-    global _auto_lights_level_on, _auto_lights_level_off, _auto_lights_enable
+    global _auto_lights_level_on, _auto_lights_level_off, _auto_lights_enable, _proximity_lock_enable
     _auto_lights_level_on = auto_lights_level_on
     _auto_lights_level_off = auto_lights_level_off
     _auto_lights_enable = enable_auto_lights
+    _proximity_lock_enable = enable_proximity_lock
 
 
 def get_sensor_data() -> dict:
@@ -64,8 +66,7 @@ wish = [
     (330, 250), (330, 250), (330, 250),
     (440, 250), (440, 125), (494, 125), (440, 125), (392, 125),
     (349, 250), (294, 250), (247, 125), (247, 125),
-    (294, 250), (392, 250), (330, 250),
-    (349, 500)
+    (294, 250), (392, 250), (330, 250), (349, 500)
 ]
 def find_mode():
     for freq, duration in wish:
