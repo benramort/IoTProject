@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.iotclient.serviceProxy.ServiceProxy
+import kotlinx.coroutines.Dispatchers
 
 val PurpleMain = Color(0xFF7C4DFF)
 val PurpleSoft = Color(0xFFEDE7F6)
@@ -102,11 +104,31 @@ fun SettingsScreen(onNavigate: (String) -> Unit) {
             Spacer(modifier = Modifier.height(24.dp))
 
             // FIND MODE
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                Text(if (selectedLanguage == "Español") "Modo de búsqueda automático" else "Enable find mode")
-                Spacer(modifier = Modifier.width(12.dp))
-                Switch(checked = findmode, onCheckedChange = { findmode = it })
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    if (selectedLanguage == "Español")
+                        "Activar modo de búsqueda"
+                    else
+                        "Activate find mode"
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(onClick = {
+                    ServiceProxy.triggerFindMode()
+                }) {
+                    Text(
+                        if (selectedLanguage == "Español")
+                            "Buscar"
+                        else
+                            "Find"
+                    )
+                }
             }
+
 
             // LANGUAGE
             SimpleDropdown(
