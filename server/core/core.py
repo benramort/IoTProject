@@ -29,7 +29,7 @@ def get_sensor_data() -> dict:
     temperature = api.get_temperature()
     ligth_state = api.get_light_state()
     lock_state = api.get_lock_state()
-    return {"timestamp" : timestamp, "ligth_level" : ligth_level, "temperature": temperature, "gps" : (0.0, 0.0), "lock_state" : lock_state, "light_state" : ligth_state}
+    return {"timestamp" : timestamp, "light_level" : ligth_level, "temperature": temperature, "lock_state" : lock_state, "light_state" : ligth_state}
 
 
 def setLock(state : bool):

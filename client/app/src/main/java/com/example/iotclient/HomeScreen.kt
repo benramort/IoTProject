@@ -86,7 +86,7 @@ fun HomeScreen(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                ControlsSection()
+                ControlsSection(viewModel)
             }
         }
     }
@@ -168,7 +168,7 @@ fun InfoCard(
 // CONTROLS
 // -------------------------------------------------------
 @Composable
-fun ControlsSection(modifier: Modifier = Modifier) {
+fun ControlsSection(viewModel : MainViewModel, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -178,7 +178,7 @@ fun ControlsSection(modifier: Modifier = Modifier) {
             icon = Icons.Default.Lightbulb,
             label = "Light",
             modifier = Modifier.weight(1f),
-            onClick = { ServiceProxy.setLight(true) }
+            onClick = { viewModel.toggleLight() }
 
         )
 
@@ -186,7 +186,7 @@ fun ControlsSection(modifier: Modifier = Modifier) {
             icon = Icons.Default.Lock,
             label = "Lock",
             modifier = Modifier.weight(1f),
-            onClick = { ServiceProxy.setLock(true) }
+            onClick = { viewModel.toggleLock() }
 
         )
     }
