@@ -119,7 +119,7 @@ object ServiceProxy {
             try {
                 val request = Request.Builder()
                     .url("$baseUrl/findMode")
-                    .post("".toRequestBody(null))
+                    .get()
                     .build()
 
                 val response = client.newCall(request).execute()
