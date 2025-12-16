@@ -18,8 +18,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.iotclient.MapViewModel
 import com.example.iotclient.PurpleSoft
 import com.example.weddingapp.ui.settings.PurpleMain
+import kotlinx.coroutines.launch
 import java.util.*
 
 val RoutePurple = Color(0xFF7C4DFF)
@@ -27,10 +30,22 @@ val RoutePink = Color(0xFFFF69B4)
 val RouteYellow = Color(0xFFFFA500)
 val KeyPointColor = Color.Black
 
+data class GPSPoint(
+    val lat: Double,
+    val lon: Double,
+    val speed: Float
+)
+
 @Composable
-fun MapScreen(onNavigate: (String) -> Unit) {
+fun MapScreen(onNavigate: (String) -> Unit,
+              viewModel: MapViewModel = viewModel()) {
     val context = LocalContext.current
-    var currentDay by remember { mutableStateOf(Calendar.getInstance()) }
+    val currentDay by viewModel.currentDay.collectAsState()
+    val routePoints by viewModel.routePoints.collectAsState()
+    val scope = rememberCoroutineScope()
+
+    // Fetch GPS data for the current day initially
+
 
     Scaffold(
         bottomBar = { BottomNavigationBar(currentScreen = "map", onNavigate = onNavigate) }
@@ -43,24 +58,26 @@ fun MapScreen(onNavigate: (String) -> Unit) {
             MapTopBar(
                 currentDay = currentDay,
                 onPreviousDay = {
-                    currentDay = (currentDay.clone() as Calendar).apply {
-                        add(Calendar.DAY_OF_MONTH, -1)
-                    }
-                },
+                    viewModel.setDay(
+                        (currentDay.clone() as Calendar).apply {
+                            add(Calendar.DAY_OF_MONTH, -1)
+                        }
+                    )},
                 onNextDay = {
-                    currentDay = (currentDay.clone() as Calendar).apply {
-                        add(Calendar.DAY_OF_MONTH, 1)
-                    }
-                },
-                onDateSelected = { year, month, day ->
-                    currentDay = Calendar.getInstance().apply {
-                        set(year, month, day)
-                    }
+                    viewModel.setDay(
+                        (currentDay.clone() as Calendar).apply {
+                            add(Calendar.DAY_OF_MONTH, 1)
+                        }
+                    )},
+                onDateSelected = { y, m, d ->
+                    viewModel.setDay(
+                        Calendar.getInstance().apply { set(y, m, d) }
+                    )
                 }
             )
 
             Box(modifier = Modifier.fillMaxSize()) {
-                FakeMapCanvas(modifier = Modifier.fillMaxSize())
+                FakeMapCanvas(routePoints = routePoints, modifier = Modifier.fillMaxSize())
 
                 RouteLegend(
                     modifier = Modifier
@@ -73,49 +90,50 @@ fun MapScreen(onNavigate: (String) -> Unit) {
 }
 
 @Composable
-fun FakeMapCanvas(modifier: Modifier = Modifier) {
-    val routePoints = remember {
-        listOf(
-            Triple(0.1f to 0.2f, 10f, "Start"),
-            Triple(0.2f to 0.3f, 20f, "Point 1"),
-            Triple(0.3f to 0.25f, 30f, "Point 2"),
-            Triple(0.5f to 0.4f, 15f, "End"),
-            Triple(0.7f to 0.6f, 40f, "Point 3"),
-            Triple(0.85f to 0.4f, 50f, "Point 4")
-        )
-    }
+fun FakeMapCanvas(routePoints: List<GPSPoint>, modifier: Modifier = Modifier) {
+    if (routePoints.isEmpty()) return
 
     Canvas(modifier = modifier) {
-        drawRect(color = Color(0xFFDBDBDB))
+        drawRect(color = Color(0xFFDBDBDB)) // Background
+
+        val minLat = routePoints.minOf { it.lat }
+        val maxLat = routePoints.maxOf { it.lat }
+        val minLon = routePoints.minOf { it.lon }
+        val maxLon = routePoints.maxOf { it.lon }
+
+        fun mapToCanvas(lat: Double, lon: Double): Offset {
+            val x = ((lon - minLon) / (maxLon - minLon).coerceAtLeast(0.0001)) * size.width
+            val y = size.height - ((lat - minLat) / (maxLat - minLat).coerceAtLeast(0.0001)) * size.height
+            return Offset(x.toFloat(), y.toFloat())
+        }
 
         for (i in 0 until routePoints.size - 1) {
-            val (start, speed, _) = routePoints[i]
-            val (end, _, _) = routePoints[i + 1]
+            val start = routePoints[i]
+            val end = routePoints[i + 1]
 
             val color = when {
-                speed <= 15f -> RoutePurple
-                speed <= 35f -> RoutePink
+                start.speed <= 15f -> RoutePurple
+                start.speed <= 35f -> RoutePink
                 else -> RouteYellow
             }
 
             drawLine(
                 color = color,
-                start = Offset(start.first * size.width, start.second * size.height),
-                end = Offset(end.first * size.width, end.second * size.height),
+                start = mapToCanvas(start.lat, start.lon),
+                end = mapToCanvas(end.lat, end.lon),
                 strokeWidth = 12f,
                 cap = StrokeCap.Round
             )
         }
 
-        routePoints.forEach { (pos, _, label) ->
-            val px = pos.first * size.width
-            val py = pos.second * size.height
-            drawCircle(color = KeyPointColor, radius = 14f, center = Offset(px, py))
+        routePoints.forEachIndexed { index, point ->
+            val offset = mapToCanvas(point.lat, point.lon)
+            drawCircle(color = KeyPointColor, radius = 14f, center = offset)
 
             drawContext.canvas.nativeCanvas.drawText(
-                label,
-                px + 20f,
-                py - 10f,
+                "P${index + 1}",
+                offset.x + 20f,
+                offset.y - 10f,
                 android.graphics.Paint().apply {
                     color = android.graphics.Color.BLACK
                     textSize = 36f
@@ -190,7 +208,6 @@ fun MapTopBar(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = {
-                // Properly create and show DatePickerDialog
                 val year = currentDay.get(Calendar.YEAR)
                 val month = currentDay.get(Calendar.MONTH)
                 val day = currentDay.get(Calendar.DAY_OF_MONTH)
@@ -205,7 +222,6 @@ fun MapTopBar(
                     day
                 )
 
-                // Set button colors after dialog is created
                 dialog.setOnShowListener {
                     dialog.getButton(DatePickerDialog.BUTTON_POSITIVE)?.setTextColor(PurpleMain.toArgb())
                     dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE)?.setTextColor(PurpleMain.toArgb())
@@ -224,7 +240,6 @@ fun MapTopBar(
         }
     }
 }
-
 
 @Composable
 fun BottomNavigationBar(currentScreen: String, onNavigate: (String) -> Unit) {
@@ -271,6 +286,23 @@ fun BottomNavigationBar(currentScreen: String, onNavigate: (String) -> Unit) {
             }
         }
     }
+}
+
+
+fun getHistoryForDate(date: Calendar): List<GPSPoint> {
+    // Call backend API here; currently stub returns dummy data
+    // Replace with your actual get_history API call
+    // Example:
+    // val json = service.getHistory(date)
+    // return json.map { GPSPoint(it.lat, it.lon, it.speed) }
+
+    // Temporary fake data for testing
+    return listOf(
+        GPSPoint(65.05, 25.48, 10f),
+        GPSPoint(65.052, 25.481, 12f),
+        GPSPoint(65.053, 25.482, 20f),
+        GPSPoint(65.055, 25.485, 15f)
+    )
 }
 
 @Preview(showBackground = true)

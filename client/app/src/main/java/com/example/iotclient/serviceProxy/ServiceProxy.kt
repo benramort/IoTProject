@@ -2,9 +2,11 @@ package com.example.iotclient.serviceProxy
 
 import android.location.Location
 import android.util.Log
+import com.example.weddingapp.ui.map.GPSPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -12,6 +14,8 @@ import kotlinx.serialization.json.*
 import okhttp3.Dispatcher
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 object ServiceProxy {
 
@@ -35,7 +39,7 @@ object ServiceProxy {
 
     fun proximityCheck(location : Location) {
         CoroutineScope(Dispatchers.IO).launch {
-            val json = Json.encodeToString(LocationDTO(location.latitude, location.longitude))
+            val json = Json.encodeToString(LocationDTO(location.latitude, location.longitude, 0f, ""))
             Log.d("myApp", json)
             val requestBody = json.toRequestBody()
 
@@ -154,6 +158,43 @@ object ServiceProxy {
                 Log.e("MyApp", "Submit Error", e)
             }
         }
+    }
+
+    fun getHistoryForDate(startDate : Calendar, endDate : Calendar) : List<GPSPoint> {
+        try {
+            val formatter = SimpleDateFormat("ddMMyy")
+
+            val jsonBody = " { \"start\": \""+ formatter.format(startDate.time).toString() +"\", \"end\": \""+formatter.format(endDate.time).toString() +"\"}"
+
+            // Create request body
+            // Log.d("myApp", jsonBody)
+            val requestBody = jsonBody.toRequestBody("application/json; charset=utf-8".toMediaType())
+
+            // Build PUT request
+            val request = Request.Builder()
+                .url(baseUrl+"/getGps")
+                .put(requestBody)
+                .build()
+
+            val response = client.newCall(request).execute()
+
+            if (response.code == 200) {
+                val string = response.body?.string() ?: "[]"
+                Log.d("myApp", string)
+                response.close()
+                val locationDTOlist : List<LocationDTO>  = Json.decodeFromString(string);
+                return locationDTOlist.map { e -> e.toGPSPoint() }
+            } else {
+                response.close()
+                return emptyList()
+            }
+
+        } catch (e : Exception){
+            Log.e("MyApp", "Map Error", e)
+            return  emptyList()
+        }
+
+
     }
 
 

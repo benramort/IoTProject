@@ -75,7 +75,7 @@ def get_gps(date1, date2):
             'speed_kmph': round(point['speed_kmph'], 2)
         }
         json_list.append(payload)
-    return json.dumps(json_list)
+    return json_list
 
 def rad(x):
     return x * 0.017453292519943295  # π/180
