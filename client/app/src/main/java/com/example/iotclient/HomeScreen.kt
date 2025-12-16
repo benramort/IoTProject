@@ -9,8 +9,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -37,8 +36,16 @@ val BackgroundSoft = Color(0xFFF9F7FC)
 @Composable
 fun HomeScreen(
     currentScreen: String,
+    viewModel: MainViewModel,
     onNavigate: (String) -> Unit
 ) {
+    val lightLevel = viewModel.ligthLevel.collectAsState().value
+    val temperature = viewModel.temperature.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        viewModel.updateData()
+    }
+
     Scaffold(
         bottomBar = { BottomNavigationBar(currentScreen, onNavigate) }
     ) { paddingValues ->
@@ -60,7 +67,7 @@ fun HomeScreen(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                EnvironmentInfoSection()
+                EnvironmentInfoSection(lightLevel, temperature)
             }
 
             // Divider in middle
@@ -89,26 +96,7 @@ fun HomeScreen(
 // ENVIRONMENT INFO
 // -------------------------------------------------------
 @Composable
-fun EnvironmentInfoSection(serviceProxy: ServiceProxy = ServiceProxy(), modifier: Modifier = Modifier) {
-
-    // State variables for real sensor values
-    val temperatureState = remember { mutableStateOf("--") }
-    val lightLevelState = remember { mutableStateOf("--") }
-
-    // Load values from the service proxy
-    LaunchedEffect(Unit) {
-        while(true) {
-            serviceProxy.getTemperature { temp ->
-                temp?.let { temperatureState.value = "%.1f°".format(it) }
-            }
-            serviceProxy.getLightLevel { level ->
-                level?.let { lightLevelState.value = "%.0f".format(it) }
-            }
-            kotlinx.coroutines.delay(5000L) // refresh every 5 seconds
-        }
-    }
-
-
+fun EnvironmentInfoSection(lightLevel : Float?, temperature : Float?, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -117,19 +105,18 @@ fun EnvironmentInfoSection(serviceProxy: ServiceProxy = ServiceProxy(), modifier
         InfoCard(
             icon = Icons.Default.Thermostat,
             label = "Temperature",
-            value = temperatureState.value,
+            value = temperature?.toString() ?: "--",
             modifier = Modifier.weight(1f)
         )
 
         InfoCard(
             icon = Icons.Default.WbSunny,
-            label = "Light Level",
-            value = lightLevelState.value,
+            label = "Light",
+            value = lightLevel?.toString() ?: "--",
             modifier = Modifier.weight(1f)
         )
     }
 }
-
 
 // -------------------------------------------------------
 // INFO CARD
@@ -182,38 +169,25 @@ fun InfoCard(
 // -------------------------------------------------------
 @Composable
 fun ControlsSection(modifier: Modifier = Modifier) {
-    val lightOn = remember { mutableStateOf(false) }
-    val unlocked = remember { mutableStateOf(false) }
-
     Row(
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // LIGHT BUTTON
         ControlButton(
             icon = Icons.Default.Lightbulb,
             label = "Light",
-            iconTint = if (lightOn.value) Color.Yellow else PurpleMain,
             modifier = Modifier.weight(1f),
-            onClick = {
-                // Call ServiceProxy and set lightOn to true on success
-                ServiceProxy().setLight(true) // async
-                lightOn.value = true
-            }
+            onClick = { ServiceProxy.setLight(true) }
+
         )
 
-        // LOCK BUTTON
         ControlButton(
-            icon = if (unlocked.value) Icons.Default.LockOpen else Icons.Default.Lock,
+            icon = Icons.Default.Lock,
             label = "Lock",
-            iconTint = if (unlocked.value) Color.Green else PurpleMain,
             modifier = Modifier.weight(1f),
-            onClick = {
-                // Call ServiceProxy and set unlocked to true on success
-                ServiceProxy().setLock(true) // async
-                unlocked.value = true
-            }
+            onClick = { ServiceProxy.setLock(true) }
+
         )
     }
 }
@@ -225,7 +199,6 @@ fun ControlsSection(modifier: Modifier = Modifier) {
 fun ControlButton(
     icon: ImageVector,
     label: String,
-    iconTint: Color = PurpleMain,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -251,7 +224,7 @@ fun ControlButton(
                 Icon(
                     imageVector = icon,
                     contentDescription = label,
-                    tint = iconTint,
+                    tint = PurpleMain,
                     modifier = Modifier.padding(16.dp)
                 )
             }
@@ -264,7 +237,6 @@ fun ControlButton(
         }
     }
 }
-
 
 // -------------------------------------------------------
 // BOTTOM NAVIGATION BAR
@@ -313,10 +285,14 @@ fun BottomNavigationBar(currentScreen: String,onNavigate: (String) -> Unit) {
 // -------------------------------------------------------
 // PREVIEW
 // -------------------------------------------------------
+/*
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
+    val mainViewModel = MainViewModel();
     MaterialTheme {
-        HomeScreen(currentScreen = "home", onNavigate = {})
+        HomeScreen(currentScreen = "home", onNavigate = {}, viewModel = mainViewModel)
     }
 }
+*/
+

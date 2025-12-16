@@ -1,19 +1,27 @@
 import time
 import sensors.api as api
 import uasyncio
-import math
-import requests
-import json
 
 _auto_lights_level_on = 0
 _auto_lights_level_off = 0
+_auto_lights_enable = False
+activate_find_mode = False
 
-def configure_settings(enable_auto_ligths : bool, auto_ligths_level_on : float, auto_ligths_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
-    print("Auto light: {}, On level: {:.2f}, Off level: {:.2f}, Proximity lock: {}, Proximity lock meters: {:.2f}".format(
-        enable_auto_ligths, auto_ligths_level_on, auto_ligths_level_off, enable_proximity_lock, proximity_lock_meters))
-    global _auto_lights_level_on, _auto_lights_level_off
-    _auto_lights_level_on = auto_ligths_level_on
-    _auto_lights_level_off = auto_ligths_level_off
+current_lat = 65.059941
+current_lon = 25.466049
+
+def configure_settings( enable_auto_lights : bool, auto_lights_level_on : float, 
+        auto_lights_level_off : float, enable_proximity_lock : bool, proximity_lock_meters : float):
+    print("Auto light: {}, On level: {:.2f}, Off level: {:.2f}, \
+            Proximity lock: {}, Proximity lock meters: {:.2f}".format(
+        enable_auto_lights, auto_lights_level_on, 
+        auto_lights_level_off, enable_proximity_lock, proximity_lock_meters))
+
+    global _auto_lights_level_on, _auto_lights_level_off, _auto_lights_enable
+    _auto_lights_level_on = auto_lights_level_on
+    _auto_lights_level_off = auto_lights_level_off
+    _auto_lights_enable = enable_auto_lights
+
 
 def get_sensor_data() -> dict:
     timestamp = time.time() # This maybe doesnt work as is should
@@ -40,6 +48,7 @@ def setLight(state : bool):
 
 def auto_lights_check():
     current_level = api.get_light_level()
+    #print(f"Current: {current_level}. On: {_auto_lights_level_on}. Off: {_auto_lights_level_off}.")
     if current_level < _auto_lights_level_on:
         api.turn_lights_on()
     elif current_level > _auto_lights_level_off:
@@ -58,7 +67,7 @@ wish = [
     (294, 250), (392, 250), (330, 250),
     (349, 500)
 ]
-def findMode():
+def find_mode():
     for freq, duration in wish:
         api.play_sound(freq)
         api.turn_lights_on()
@@ -67,117 +76,27 @@ def findMode():
         api.turn_lights_off()
         time.sleep_ms(int(duration * 0.3))   # 30% spacing
 
-def get_GPS_history(start_time : int, end_time : int) -> list:
-    ...
-
-
 def subroutine():
+    global activate_find_mode
+    counter = 1
+    global current_lat, current_lon
+    current_lat = 65.059941
+    current_lon = 25.466049
     while True:
-        print("Subroutine running")
+        #print("Subroutine running")
+        if activate_find_mode:
+            find_mode()
+            activate_find_mode = False
+
+        if _auto_lights_enable:
+            auto_lights_check()
+
+        if counter % 10 == 5:
+            current_lat = 45.813027
+            current_lon = 15.977569
+        elif counter % 10 == 0:
+            current_lat = 65.059941
+            current_lon = 25.466049
+        counter += 1
+
         time.sleep(1)
-
-
-def proximity_check(user_lon, user_lat):
-    # Earth radius in meters
-    R = 6371000  
-
-    # Get bike GPS directly here
-    try:
-        bike_lat = 0 # THIS IS NOT IMPLEMENTED YET
-        bike_lon = 0  # Must return (lat, lon)
-    except:
-        # If GPS unavailable, fail safe
-        return False
-
-    # Convert degrees to radians
-    phi1 = math.radians(bike_lat)
-    phi2 = math.radians(user_lat)
-    delta_phi = math.radians(user_lat - bike_lat)
-    delta_lambda = math.radians(user_lon - bike_lon)
-
-    # Haversine formula
-    a = math.sin(delta_phi/2)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(delta_lambda/2)**2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    distance = R * c  # distance in meters
-
-    # Return True if within 15 meters, otherwise False
-    is_close = distance <= 15
-
-    # Automatically unlock if close
-    if is_close:
-        setLock(False)
-
-    return is_close
-
-
-def parse_lat_lon(lat_str, ns, lon_str, ew):
-    lat_deg = int(lat_str[:2])
-    lat_min = float(lat_str[2:])
-    lat = lat_deg + lat_min / 60
-    if ns.upper() == 'S':
-        lat = -lat
-
-    lon_deg = int(lon_str[:3])
-    lon_min = float(lon_str[3:])
-    lon = lon_deg + lon_min / 60
-    if ew.upper() == 'W':
-        lon = -lon
-
-    return lat, lon
-
-"""
-def load_nmea_data(file_path):
-    data_points = []
-
-    with open(file_path, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if line.startswith('$GPRMC'):
-                parts = line.split(',')
-                if len(parts) < 9:
-                    continue
-                time_str = parts[1]        # hhmmss.sss
-                lat_str = parts[3]
-                ns = parts[4]
-                lon_str = parts[5]
-                ew = parts[6]
-                speed_kmph = float(parts[7])*1.852
-                date_str = parts[9]        # ddmmyy
-
-                # Convert time & date to datetime
-                dt = datetime.strptime(date_str + time_str[:6], '%d%m%y%H%M%S')
-
-                # Convert lat/lon to decimal degrees
-                lat, lon = parse_lat_lon(lat_str, ns, lon_str, ew)
-
-                data_points.append({
-                    'timestamp': dt,
-                    'lat': lat,
-                    'lon': lon,
-                    'speed_kmph': speed_kmph
-                })
-
-    return data_points
-"""
-
-def send_gps_data(data):
-    url = "http://localhost:5000/gps" #has to be actual destination
-    headers = {'Content-Type' : 'application/json'}
-    response = requests.post(url, headers = headers, data = json.dumps(data))
-    print(f"Setn: {json.dumps(data)} | Response: {response.status_code}")
-
-"""
-def stream_gps(file_path):
-    data_points = load_nmea_data(file_path)
-    print(f"Loaded {len(data_points)} GPS points.")
-
-    for point in data_points:
-        payload = {
-            'timestamp': point['timestamp'].isoformat() + "Z",
-            'lat': point['lat'],
-            'lon': point['lon'],
-            'speed_kmph': round(point['speed_kmph'], 2)
-        }
-        send_gps_data(payload)
-"""
-

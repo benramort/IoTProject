@@ -1,34 +1,52 @@
 import machine 
+import time
+#import ssd1306
 
 light_state = False
 lock_state = False
 i2c = None
 buzzer_pwm = None
 button_1 = None
+display = None
 
 def init(light_state_i = False, lock_state_i = False):
-    global i2c, buzzer_pwm, light_state, lock_state, button_1
+    global i2c, buzzer_pwm, light_state, lock_state, button_1, display
 
     light_state = light_state_i
     lock_state = lock_state_i
-    i2c = machine.I2C(0, sda=machine.Pin(12), scl=machine.Pin(13))
+    i2c = machine.I2C(0, sda=machine.Pin(12), scl=machine.Pin(13), freq=100000)
 
     #configure button
     button_1 = machine.Pin(2, machine.Pin.IN, machine.Pin.PULL_UP)
     button_1.irq(trigger=machine.Pin.IRQ_RISING, handler=buttons_callback)
 
     #configure light level sensor
+    #print(i2c.scan())
+    #time.sleep_ms(100)
     i2c.writeto_mem(0x10, 0x1000, b'\x00')
+    time.sleep_ms(100)
 
     #configure buzzer
     buzzer_pwm = machine.PWM(machine.Pin(17))
     buzzer_pwm.duty_u16(512)
+    
+    #configure temp sensor
+    get_temperature()
+
+    #configure display
+    #print(i2c.scan())
+    #display = ssd1306.SSD1306_I2C(128, 64, i2c)
+    #display.fill(0)
+    #display.show()
+    #time.sleep_ms(100)
+    #print(i2c.scan())
     return
 
 
 def buttons_callback(pin):
     if pin == button_1:
         toggle_lights()
+
 
 def get_temperature():
     """
@@ -66,6 +84,8 @@ def play_sound(freq):
 
 
 def draw_screen():
+    display.text('Hello, World!', 0, 0, 1)
+    display.show()
     return
 
 
