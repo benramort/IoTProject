@@ -10,4 +10,5 @@ data class LocationDTO(val lat : Double, val lon : Double, val speed_kmph : Floa
     fun toGPSPoint() : GPSPoint {
         return GPSPoint(lat, lon, speed_kmph)
     }
+
 }
