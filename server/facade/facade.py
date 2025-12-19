@@ -16,7 +16,7 @@ def hello_world(request):
     utils.send_response(server, "HELLO", 201)
 
 def configure_settings(request):
-    print(request)
+    print("Request:" + request)
     try:
         json_start = str.find(request, "{")
         request_body = request[json_start : ]
@@ -31,6 +31,7 @@ def configure_settings(request):
 
         utils.send_response(server, "", 204)
     except (ValueError, KeyError) as e:
+            
         print(e)
         utils.send_response(server, "Invalid JSON", 400)
 

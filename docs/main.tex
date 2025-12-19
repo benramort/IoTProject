@@ -2,7 +2,7 @@
 \usepackage{graphicx}
 
 \title{Smart Bike}
-\author{Group 7: Beñat Ramirez, Meritxell Carvajal Librado, Vigo Matuka, Mark Suvorov}
+\author{Group 7: Beñat Ramirez, Meritxell Carvajal Librado, \\ Vigo Matuka, Mark Suvorov}
 \setlength{\parskip}{1em}
 \date{}
 
@@ -61,15 +61,13 @@ Furthermore, the idea of deeper integration of sensors and actuators directly in
 	\label{fig:architecture}
 \end{figure}
 
-In figure \ref{fig:architecture}, we can see the architecture that we will use for our project. In the IoT device,
-the data manager allows an easy access to the information stored in the devices' memory. The Sensor/Actuator manager
+In figure \ref{fig:architecture}, we can see the architecture that we will use for our project. In the IoT device, the Sensor/Actuator API
 provides an abstraction that allows us to easily access to the data provided by different sensors or activate different
 actuators in an easy way. The network manager will be in charge of handling the connectivity with the mobile app. The business
 layer takes decisions based on the data from different sources.
 \\
 \\
-In the mobile app we have the classical three layer architecture for clients: The presentation layer renders the UI for the user, the 
-business layer handles any logic required for the client, and the service proxy connects to the IoT device.
+In the mobile app we have a two layer architecture for the client: The presentation layer renders the UI for the user and the service proxy handles the connection to the IoT device, and is in charge of the data serialization.
 
 \section{Methods \& Tools}
 The development of the Smart Bike system will be based on a modular architecture combining embedded programming on the Raspberry Pi Pico W, wireless communication, and a mobile application. The project will follow an object-oriented programming (OOP) approach, where each hardware and software component will be encapsulated into dedicated classes (e.g., GPSSensor, LightSensor, ActuatorController, MQTTClient, AppInterface). 

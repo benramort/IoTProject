@@ -23,9 +23,9 @@ print(sta_if.ifconfig()[0])
 if (sta_if.isconnected() == False):
     raise Exception("WiFi not connected")
 
-api.init()
+# api.init()
 
-_thread.start_new_thread(core.subroutine, ())
+# _thread.start_new_thread(core.subroutine, ())
 
 server : MicroPyServer = MicroPyServer()
 facade.set_server(server)
