@@ -101,6 +101,8 @@ For MQTT communication on the mobile side, the project will use:
 
 \section{Evaluation}
 
+\subsection{Evaluation planning}
+
 To be able to ensure that the products performance is the expected, we will carry on different evaluation that will measure different
 attributes of the product.
 \\
@@ -124,6 +126,31 @@ To ensure that this criterion is met, we will carry out two evaluation scenarios
 	\item A latency test, where we will send an instruction to the device and measure the time it takes to give a response.
 	\item A usability test, where a user who has never used the app will be requested to perform a task and we will measure the time it takes.
 \end{itemize}
+
+
+\subsection{Evaluation results}
+
+\textbf{Latency test:}
+
+For this test we have used Locust, a python testing framework that allows us to simulate 
+multiple clients doing requests to the device, and check how the device performs over load.
+To more accurately represent the behavior of real scenarios, only one client is going to perform request
+to the device. This client will do requests to three different endpoints: A test endpoint that always returns a text,
+the find mode trigger endpoint and the sensor data endpoint.
+
+\begin{figure}[h!]
+	\includegraphics[width=\linewidth]{graph.png}
+	\caption{Latency test results}
+	\label{fig:performance}
+\end{figure}
+
+As we can see in figure \ref{fig:performance} 95\% of the requests have a latency of less than 250 milliseconds, beating our goal
+of 0.5 second response time. The average latency has been of 199.3 milliseconds. Our device is also able to 
+respond to 5 requests per second, which is enough for a single client doing requests to a single device, but does not match our expected 10 requests per second. 
+The response time is also very similar between the three requests, indicating that the data processing doesn't take too
+long in the device, and that the most time consuming part of the process is data serialization and transmission through the network. 
+
+\textbf{Usability test:}
 
 
 
