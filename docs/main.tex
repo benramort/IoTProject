@@ -70,34 +70,62 @@ layer takes decisions based on the data from different sources.
 In the mobile app we have a two layer architecture for the client: The presentation layer renders the UI for the user and the service proxy handles the connection to the IoT device, and is in charge of the data serialization.
 
 \section{Methods \& Tools}
-The development of the Smart Bike system will be based on a modular architecture combining embedded programming on the Raspberry Pi Pico W, wireless communication, and a mobile application. The project will follow an object-oriented programming (OOP) approach, where each hardware and software component will be encapsulated into dedicated classes (e.g., GPSSensor, LightSensor, ActuatorController, MQTTClient, AppInterface). 
+The development of the Smart Bike system is based on a modular architecture combining embedded programming on the Raspberry Pi Pico W, wireless communication, and a mobile application. The project follows an object-oriented programming (OOP) approach, where each hardware and software component is encapsulated into dedicated classes (e.g. LightSensor, ActuatorController, MQTTClient, AppInterface). 
 
-\subsection{Embedded Programming \& Libraries}
 
-The Raspberry Pi Pico W will run MicroPython and will be responsible for reading sensor data, processing it locally, and controlling the output actuators. To support these functionalities, several libraries will be used:
+\subsection{Tools on Frontend}
 
-\begin{itemize}
-    \item \textbf{MicropyGPS:} This library will be used to read and parse GPS data from an external GPS module. It will allow the system to obtain coordinates, speed, and direction information in a structured format.
-    \item \textbf{machine \& utime (MicroPython core libraries):} These libraries will allow interaction with GPIO pins, ADC-based sensors (light, temperature), and will provide timing utilities needed for periodic data collection and event scheduling.
-    \item \textbf{umqtt.simple:} This lightweight MQTT library will be used to publish sensor data and receive commands from the mobile app. It will form the backbone of the wireless communication layer.
-\end{itemize}
+The frontend of the Smart Bike system was developed as an Android mobile application using Android Studio and the Kotlin programming language. The application serves as the primary user interface, enabling users to monitor sensor data, visualize ride history, and remotely control bike functionalities.
 
-\subsection{Networking \& Wireless Tools}
+\subsubsection{UI Framework and Architecture}
 
-The Smart Bike would likely rely on the Raspberry Pi Pico W’s onboard Wi-Fi module to enable wireless connectivity. The Pico W will connect to a Wi-Fi network on startup and will establish a connection to an MQTT broker. MQTT will be chosen as the main communication protocol because of its low overhead and suitability for IoT systems that exchange small and frequent messages.
-
-Tools such as \textbf{MQTT Explorer} is what we plan to use during the development to verify message flow, debug communication issues, and support evaluation of throughput and latency.
-
-\subsection{Mobile Application Development Tools}
-
-We thought of developing the mobile application using \textbf{Android Studio}, as it provides flexibility, strong UI tools, and compatibility with MQTT communication frameworks. The application will be responsible for visualizing data such as speed, GPS location, temperature, and bike status, while also sending commands (e.g., lock, lights on/off) to the Pico W.
-
-For MQTT communication on the mobile side, the project will use:
+The application is implemented using Jetpack Compose, Android’s modern declarative UI framework. This approach allows for a clear separation between the presentation layer and application logic, improving modularity and maintainability. The user interface is structured into independent composable screens:
 
 \begin{itemize}
-    \item \textbf{Paho MQTT Android Client:} This library  will allow the Android app to subscribe to live sensor topics and publish control messages to the Smart Bike device.
+    \item \textbf{Home Screen:} Displays real-time sensor data such as temperature and ambient light level, and provides quick access to core controls including lock/unlock and light on/off.
+    \item \textbf{Settings Screen:} Allows users to configure advanced features such as automatic light activation thresholds, proximity-based unlocking distance, language selection, and activation of the find mode.
+    \item \textbf{Map Screen:} Presents historical GPS routes for selected dates, enabling users to review past rides with speed-based visual feedback.
 \end{itemize}
 
+Navigation between screens is managed through a bottom navigation bar, ensuring a consistent and intuitive user experience.
+
+\subsubsection{State Management and Data Flow}
+
+The frontend follows a ViewModel-based architecture, where application state—including sensor values, GPS history, and configuration settings—is exposed through observable state flows. This design ensures that the user interface automatically reacts to backend updates and user interactions without requiring manual refreshes.
+
+User actions such as toggling lights, locking the bike, or submitting configuration settings immediately trigger network requests, while sensor data is periodically fetched and reflected in the UI in near real time.
+
+\subsubsection{Networking and Backend Communication}
+
+Communication between the Android application and the Smart Bike device is handled through a dedicated Service Proxy layer. This component abstracts network operations and provides a clean API for the UI and ViewModels.
+
+The Service Proxy supports the following operations:
+\begin{itemize}
+    \item Retrieving live sensor data (temperature, light level)
+    \item Sending control commands (lock, lights, find mode)
+    \item Submitting configuration settings (auto-light thresholds, proximity lock distance)
+    \item Fetching historical GPS data for route visualization
+\end{itemize}
+
+The networking stack is implemented using OkHttp3, a widely adopted and efficient HTTP client for Android. OkHttp3 is responsible for creating and managing HTTP connections, sending GET and PUT requests to the IoT device, handling JSON-based request and response payloads, and managing connection reuse and low-level network performance.
+
+All data exchanged between the mobile application and the backend is encoded in JSON format. Network operations are executed asynchronously using Kotlin coroutines to ensure that communication with the IoT device does not block the main UI thread and that the application remains responsive.
+
+\subsubsection{Data Visualization}
+
+For ride history visualization, the application includes a custom map-style canvas implementation. GPS coordinates received from the backend are projected onto a two-dimensional plane and connected to form a continuous route. Speed information is represented using color-coded segments, allowing users to easily distinguish between slow, medium, and fast sections of a ride. Key points are highlighted and labelled to improve clarity.
+
+This lightweight visualization approach avoids reliance on external mapping services while still providing meaningful insight into riding behaviour.
+
+\subsection{Tools on Backend}
+
+The backend of the system was implemented using MicroPython, a compact implementation of Python designed for devices with limited computational resources. MicroPython was chosen due to its low memory footprint and suitability for IoT environments, as well as its use of familiar Python syntax, which simplifies development and testing.
+
+A central component of the backend is Micropyserver, a lightweight web server specifically designed for MicroPython. Micropyserver enables the microcontroller to receive and process HTTP requests and send appropriate responses. In this project, it was used to create web endpoints that allow external applications to retrieve sensor data and control system functionalities in real time. Its minimal design ensures efficient memory usage while maintaining reliable communication between the device and the client application.
+
+The backend is organized into distinct modules responsible for sensor data acquisition, request handling, and data processing. This modular structure improves maintainability and scalability, as changes to one component can be made without affecting the rest of the system. Helper scripts are used for tasks such as data formatting and common operations, resulting in cleaner and less repetitive code.
+
+Overall, the selected backend tools provide a balanced combination of performance, simplicity, and flexibility, enabling the system to operate reliably within the constraints of a resource-limited IoT environment.
 
 \section{Evaluation}
 
@@ -130,7 +158,7 @@ To ensure that this criterion is met, we will carry out two evaluation scenarios
 
 \subsection{Evaluation results}
 
-\textbf{Latency test:}
+\subsubsection{Latency test:}
 
 For this test we have used Locust, a python testing framework that allows us to simulate 
 multiple clients doing requests to the device, and check how the device performs over load.
@@ -150,23 +178,34 @@ respond to 5 requests per second, which is enough for a single client doing requ
 The response time is also very similar between the three requests, indicating that the data processing doesn't take too
 long in the device, and that the most time consuming part of the process is data serialization and transmission through the network. 
 
-\textbf{Usability test:}
+\subsubsection{Usability Tests}
 
+Several usability tests were conducted to evaluate system effectiveness, ease of use, and overall user experience. The primary objective of these tests was to ensure that users could interact with the application naturally and complete essential tasks without confusion or unnecessary difficulty.
+
+The first usability test focused on initial user interaction. Participants were asked to connect to the system and retrieve sensor data without receiving any prior instructions. Observations indicated that most users were able to complete this task independently, suggesting that the system’s interaction flow is clear and intuitive. Minor delays were observed during initial use, primarily due to unfamiliarity with the interface rather than design shortcomings.
+
+The second test evaluated task efficiency and response clarity. Users were asked to request sensor data multiple times and interpret the returned information. Feedback showed that system responses were sufficiently fast and that the data presentation was easy to understand. Participants reported confidence in interpreting the received values, indicating that the system’s data output is well-structured and consistent.
+
+The final usability test examined error handling and system feedback. Users intentionally performed incorrect actions, such as requesting unavailable resources or disconnecting during data transmission. In these cases, the system provided clear and informative feedback messages, enabling users to understand the issue and recover without external assistance. This demonstrates effective error handling and user guidance.
+
+Overall, the usability tests confirmed that the system is accessible and user-friendly, even for users with limited technical background. The results indicate that the system’s design supports smooth interaction by providing clear feedback, reliable operation, and effective handling of user actions.
 
 
 
 
 \section{Results}
+The usability tests provided valuable insights into the system's overall performance and user experience. During the initial interaction test, the majority of participants were able to connect to the system and retrieve sensor data without guidance. This indicates that the interface is intuitive and that the primary functions can be accessed with minimal learning. While a few minor delays were observed at the start, these were primarily due to users familiarizing themselves with the interface rather than any usability flaws.
 
-Collect numerical data of test cases:
-\begin{itemize}
-\item Collecting logs of container operations
-\item Conduct simple analysis for documentation purposes (e.g. plots or graphs)
-\end{itemize}
+In the second test, which focused on task efficiency and clarity of responses, users consistently reported that the system responded quickly and that the information displayed was easy to interpret. Participants expressed confidence in understanding the sensor data, demonstrating that the backend outputs were well-structured and presented in a comprehensible manner.
 
+The final test assessed the system’s handling of errors and feedback. When users performed incorrect actions—such as requesting unavailable resources or disconnecting during data transmission—the system provided clear, informative messages that guided users toward resolution. This indicates that the system is robust in handling unexpected interactions and provides helpful guidance to users.
+
+Overall, the results from these usability tests suggest that the system is user-friendly and accessible, even for individuals with limited technical experience. The design supports smooth interaction, clear communication, and reliable operation, confirming the effectiveness of the system in real-world use scenarios.
 
 \section{Discussion}
 Discuss the results of the evaluation. What weaknesses does your application have? In what scenarions does it work well? Return back to the application area you described in Introduction -- put the results in context.
 
 
 \end{document}
+
+
